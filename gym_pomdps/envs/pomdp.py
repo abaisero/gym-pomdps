@@ -19,6 +19,7 @@ class POMDP(gym.Env):
         if model.values == 'cost':
             raise ValueError('Unsupported `cost` values.')
 
+        self.discount = model.discount
         self.state_space = spaces.Discrete(len(model.states))
         self.action_space = spaces.Discrete(len(model.actions))
         self.observation_space = spaces.Discrete(len(model.observations))
