@@ -47,7 +47,7 @@ class POMDP(gym.Env):
             1, self.T[self.state, action]).argmax().item()
         obs = self.np_random.multinomial(
             1, self.O[self.state, action, state1]).argmax().item()
-        reward = self.R[self.state, action, self.state1, obs].item()
+        reward = self.R[self.state, action, state1, obs].item()
 
         if self.episodic:
             done = self.D[self.state, action].item()
