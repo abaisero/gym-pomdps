@@ -38,6 +38,10 @@ class POMDP(gym.Env):
 
         self.state = None
 
+    def seed(self, seed):
+        self.np_random, seed_ = seeding.np_random(seed)
+        return [seed_]
+
     def reset(self):
         self.state = self.np_random.multinomial(1, self.start).argmax().item()
 
@@ -61,7 +65,3 @@ class POMDP(gym.Env):
             self.state = state1
 
         return obs, reward, done, {}
-
-    def seed(self, seed):
-        self.np_random, seed_ = seeding.np_random(seed)
-        return [seed_]
