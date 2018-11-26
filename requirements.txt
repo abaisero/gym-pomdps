@@ -1,0 +1,3 @@
+gym
+numpy
+-e git+git@github.com:abaisero/rl_parsers.git#egg=rl_parsers
