@@ -44,25 +44,27 @@ class POMDP(gym.Env):
         return [seed_]
 
     def reset(self):
-        self.state = self.np_random.multinomial(1, self.start).argmax().item()
+        self.state = self.reset_functional()
 
     def step(self, action):
         assert self.state is not None, 'State has not been initialized'
 
+        self.state, *ret = self.step_functional(self.state, action)
+        return ret
+
+    def reset_functional(self):
+        return self.np_random.multinomial(1, self.start).argmax().item()
+
+    def step_functional(self, state, action):
+        # TODO better to unify in a single TO matrix..
         state1 = self.np_random.multinomial(
-            1, self.T[self.state, action]).argmax().item()
+            1, self.T[state, action]).argmax().item()
         obs = self.np_random.multinomial(
-            1, self.O[self.state, action, state1]).argmax().item()
-        reward = self.R[self.state, action, state1, obs].item()
+            1, self.O[state, action, state1]).argmax().item()
+        reward = self.R[state, action, state1, obs].item()
 
-        if self.episodic:
-            done = self.D[self.state, action].item()
-        else:
-            done = False
-
+        done = self.D[state, action].item() if self.episodic else False
         if done:
-            self.state = None
-        else:
-            self.state = state1
+            state1 = None
 
-        return obs, reward, done, {}
+        return state1, obs, reward, done, {}

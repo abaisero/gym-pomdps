@@ -19,20 +19,27 @@ class MultiPOMDP(gym.Wrapper):
         return getattr(self.env, attr)
 
     def reset(self):
-        if self.env.start is None:
-            self.state = self.np_random.randint(
-                self.state_space.n, size=self.ntrajectories)
-        else:
-            self.state = self.np_random.multinomial(
-                1, self.env.start, size=self.ntrajectories).argmax(1)
+        self.state = self.reset_functional()
 
     def step(self, action):
+        self.state, *ret = self.step_functional(self.state, action)
+        return ret
+
+    def reset_functional(self):
+        if self.env.start is None:
+            state = self.np_random.randint(self.state_space.n,
+                                           size=self.ntrajectories)
+        else:
+            state = self.np_random.multinomial(1, self.env.start,
+                                               size=self.ntrajectories).argmax(1)
+        return state
+
+    def step_functional(self, state, action):
         state1 = np.array([self.np_random.multinomial(1, p).argmax()
-                           for p in self.env.T[self.state, action]])
+                           for p in self.env.T[state, action]])
         obs = np.array([self.np_random.multinomial(1, p).argmax()
-                        for p in self.env.O[self.state, action, state1]])
-        reward = self.env.R[self.state, action, state1, obs]
+                        for p in self.env.O[state, action, state1]])
+        reward = self.env.R[state, action, state1, obs]
         done = np.zeros(self.ntrajectories, dtype=bool)
 
-        self.state = state1
-        return obs, reward, done, {}
+        return state1, obs, reward, done, {}
