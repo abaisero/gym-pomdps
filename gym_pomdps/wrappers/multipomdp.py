@@ -6,7 +6,7 @@ import numpy as np
 
 class MultiPOMDP(gym.Wrapper):
     """Simulates multiple POMDP trajectories at the same time."""
-    def __init__(self, env, ntrajectories):
+    def __init__(self, env, ntrajectories=None):
         if not isinstance(env, POMDP):
             raise TypeError(f'Input env is not a POMDP ({type(env)})')
 
@@ -16,14 +16,20 @@ class MultiPOMDP(gym.Wrapper):
     def __getattr__(self, attr):
         return getattr(self.env, attr)
 
-    def reset(self):
-        self.state = self.reset_functional()
+    def reset(self, ntrajectories=None):
+        self.state = self.reset_functional(ntrajectories)
 
     def step(self, action):
         self.state, *ret = self.step_functional(self.state, action)
         return ret
 
-    def reset_functional(self):
+    def reset_functional(self, ntrajectories=None):
+        if ntrajectories is None:
+            ntrajectories = self.ntrajectories
+
+        if ntrajectories is None:
+            raise ValueError('Number of trajectories ({ntrajectories}) not set.')
+
         if self.env.start is None:
             state = self.np_random.randint(
                 self.state_space.n, size=self.ntrajectories)
@@ -33,6 +39,8 @@ class MultiPOMDP(gym.Wrapper):
         return state
 
     def step_functional(self, state, action):
+        shape = state.shape
+
         # mask for non-previourly-completed episodes
         mask = state != -1
 
@@ -66,16 +74,16 @@ class MultiPOMDP(gym.Wrapper):
         else:
             d = np.zeros(mask.sum(), dtype=bool)
 
-        state1 = np.full(self.ntrajectories, -1)
+        state1 = np.full(shape, -1)
         state1[mask] = s1
 
-        obs = np.full(self.ntrajectories, -1)
+        obs = np.full(shape, -1)
         obs[mask] = o
 
-        reward = np.full(self.ntrajectories, float('nan'))
+        reward = np.full(shape, float('nan'))
         reward[mask] = r
 
-        done = np.full(self.ntrajectories, True)
+        done = np.full(shape, True)
         done[mask] = d
 
         return state1, obs, reward, done, {}
