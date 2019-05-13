@@ -1,5 +1,5 @@
 import gym
-from ..envs import POMDP
+from gym_pomdps.envs import POMDP
 
 import numpy as np
 
@@ -7,10 +7,8 @@ import numpy as np
 class MultiPOMDP(gym.Wrapper):
     """Simulates multiple POMDP trajectories at the same time."""
     def __init__(self, env, ntrajectories):
-        assert isinstance(env, POMDP)
-        if env.episodic:
-            raise NotImplementedError(
-                'MultiPOMDP does not support episodic PODMPs yet.')
+        if not isinstance(env, POMDP):
+            raise TypeError(f'Input env is not a POMDP ({type(env)})')
 
         super().__init__(env)
         self.ntrajectories = ntrajectories
@@ -27,19 +25,57 @@ class MultiPOMDP(gym.Wrapper):
 
     def reset_functional(self):
         if self.env.start is None:
-            state = self.np_random.randint(self.state_space.n,
-                                           size=self.ntrajectories)
+            state = self.np_random.randint(
+                self.state_space.n, size=self.ntrajectories)
         else:
-            state = self.np_random.multinomial(1, self.env.start,
-                                               size=self.ntrajectories).argmax(1)
+            state = self.np_random.multinomial(
+                1, self.env.start, size=self.ntrajectories).argmax(1)
         return state
 
     def step_functional(self, state, action):
-        state1 = np.array([self.np_random.multinomial(1, p).argmax()
-                           for p in self.env.T[state, action]])
-        obs = np.array([self.np_random.multinomial(1, p).argmax()
-                        for p in self.env.O[state, action, state1]])
-        reward = self.env.R[state, action, state1, obs]
-        done = np.zeros(self.ntrajectories, dtype=bool)
+        # mask for non-previourly-completed episodes
+        mask = state != -1
+
+        # episodic POMDP does not support any -1
+        if not (self.env.episodic or mask.all()):
+            raise ValueError(f'Non-episodic POMDP does not support '
+                             'uninitialized states (-1)'
+                             'Perhaps the POMDP was not reset?')
+
+        # all -1s is never ok
+        if not mask.any():
+            raise ValueError(f'All states are all not initialized (-1).  '
+                             'Perhaps the POMDP was not reset?')
+
+        # unmasked states should be within bounds
+        s, a = state[mask], action[mask]
+        if not ((0 <= s) & (s < self.state_space.n)).all():
+            raise ValueError(f'State (min={s.min()}, max={s.max()}) '
+                             'outside of bounds.  '
+                             'Perhaps the POMDP was not reset?')
+
+        s1 = np.array([self.np_random.multinomial(1, p).argmax()
+                       for p in self.env.T[s, a]])
+        o = np.array([self.np_random.multinomial(1, p).argmax()
+                      for p in self.env.O[s, a, s1]])
+        r = self.env.R[s, a, s1, o]
+
+        if self.env.episodic:
+            d = self.env.D[s, a]
+            s1[d] = -1
+        else:
+            d = np.zeros(mask.sum(), dtype=bool)
+
+        state1 = np.full(self.ntrajectories, -1)
+        state1[mask] = s1
+
+        obs = np.full(self.ntrajectories, -1)
+        obs[mask] = o
+
+        reward = np.full(self.ntrajectories, float('nan'))
+        reward[mask] = r
+
+        done = np.full(self.ntrajectories, True)
+        done[mask] = d
 
         return state1, obs, reward, done, {}

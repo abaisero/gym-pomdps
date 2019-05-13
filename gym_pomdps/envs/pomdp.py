@@ -37,8 +37,6 @@ class POMDP(gym.Env):
         if episodic:
             self.D = model.reset.T.copy()  # only if episodic
 
-        self.state = None
-
     def seed(self, seed):
         self.np_random, seed_ = seeding.np_random(seed)
         return [seed_]
@@ -47,8 +45,6 @@ class POMDP(gym.Env):
         self.state = self.reset_functional()
 
     def step(self, action):
-        assert self.state is not None, 'State has not been initialized'
-
         self.state, *ret = self.step_functional(self.state, action)
         return ret
 
@@ -56,6 +52,13 @@ class POMDP(gym.Env):
         return self.np_random.multinomial(1, self.start).argmax().item()
 
     def step_functional(self, state, action):
+        if state == -1:
+            raise ValueError('State (-1) is not initialized.  '
+                             'Perhaps the POMDP was not reset?')
+
+        if not 0 <= state < self.state_space.n:
+            raise ValueError(f'State ({state}) outside of bounds.')
+
         # TODO better to unify in a single TO matrix..
         state1 = self.np_random.multinomial(
             1, self.T[state, action]).argmax().item()
@@ -65,6 +68,6 @@ class POMDP(gym.Env):
 
         done = self.D[state, action].item() if self.episodic else False
         if done:
-            state1 = None
+            state1 = -1
 
         return state1, obs, reward, done, {}

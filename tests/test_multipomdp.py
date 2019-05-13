@@ -7,35 +7,40 @@ import gym
 import gym_pomdps
 
 
-class MultiPOMDP_Test(unittest.TestCase):
-    @unittest.skip
+# TODO switch to testing the _functionsl methods
+
+
+class Gym_MultiPOMDP_Test(unittest.TestCase):
     def test_run(self):
-        env = gym.make('POMDP-shopping_2.e-v0')
-        nactions = env.action_space.n
+        ntrajectories = 5
+        nepochs, nsteps = 10, 100
 
-        ntrajectories = 3
+        env = gym.make('POMDP-shopping_2-v0')
         env = gym_pomdps.MultiPOMDP(env, ntrajectories)
 
-        nepisodes, nsteps = 10, 100
-        for i in range(nepisodes):
+        for _ in range(nepochs):
             env.reset()
-            for t in range(nsteps):
-                actions = rnd.randint(nactions, size=ntrajectories)
-                obss, rewards, dones, infos = env.step(actions)
+            for _ in range(nsteps):
+                actions = rnd.randint(env.action_space.n, size=ntrajectories)
+                obs, rewards, dones, infos = env.step(actions)
 
-    # MultiPOMDP does not support episodic POMDPs yet
-    @unittest.expectedFailure
+                if dones.any():
+                    raise Exception('Non-episodic Environment should not end '
+                                    f'(dones={dones})')
+
+
     def test_run_episodic(self):
-        env = gym.make('POMDP-shopping_2.e-episodic-v0')
-        nactions = env.action_space.n
+        ntrajectories = 5
+        nsteps = 1000
 
-        ntrajectories = 3
+        env = gym.make('POMDP-shopping_2-episodic-v0')
         env = gym_pomdps.MultiPOMDP(env, ntrajectories)
+        env.reset()
+        for _ in range(nsteps):
+            actions = rnd.randint(env.action_space.n, size=ntrajectories)
+            obs, rewards, dones, infos = env.step(actions)
 
-        nepisodes, nsteps = 1, 1000
-        for i in range(nepisodes):
-            env.reset()
-            for t in range(nsteps):
-                actions = rnd.randint(nactions, size=ntrajectories)
-                obss, rewards, dones, infos = env.step(actions)
-                # print(actions, rewards, dones)
+            if dones.all():
+                break
+        else:
+            raise Exception(f'Episodic Environment did not end (dones={dones})')

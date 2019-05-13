@@ -1,10 +1,14 @@
 import unittest
+import random
 
 import gym
 import gym_pomdps
 
 
-class GymPOMDPs_Test(unittest.TestCase):
+# TODO switch to testing the _functionsl methods
+
+
+class Gym_POMDP_Test(unittest.TestCase):
     def test_list_pomdps(self):
         pomdps = gym_pomdps.list_pomdps()
 
@@ -23,18 +27,38 @@ class GymPOMDPs_Test(unittest.TestCase):
             else:
                 envs[pomdp] = env
 
-    def test_seed(self):
-        env = gym.make('POMDP-loadunload-v0')
+    def test_run(self):
+        env = gym.make('POMDP-shopping_2-v0')
+        env.reset()
 
+        for i in range(100):
+            a = random.randint(0, env.action_space.n - 1)
+            o, r, done, info = env.step(a)
+
+    def test_run_episodic(self):
+        env = gym.make('POMDP-shopping_2-episodic-v0')
+        env.reset()
+
+        for i in range(100):
+            a = random.randint(0, env.action_space.n - 1)
+            o, r, done, info = env.step(a)
+            if done: break
+
+        if not done:
+            raise Exception('Episodic Environment did not end')
+
+    def test_seed(self):
         seed = 17
+
+        env = gym.make('POMDP-loadunload-v0')
         actions = list(range(env.action_space.n)) * 10
 
-        env.seed(seed)
-        env.reset()
-        outputs = list(map(env.step, actions))
+        # run environment multiple times with same seed
+        outputs = []
+        for _ in range(2):
+            env.seed(seed)
+            env.reset()
+            output = list(map(env.step, actions))
+            outputs.append(output)
 
-        env.seed(seed)
-        env.reset()
-        outputs2 = list(map(env.step, actions))
-
-        self.assertEqual(outputs, outputs2)
+        self.assertEqual(*outputs)
