@@ -62,3 +62,7 @@ class Gym_POMDP_Test(unittest.TestCase):
             outputs.append(output)
 
         self.assertEqual(*outputs)
+
+
+if __name__ == '__main__':
+    unittest.main()

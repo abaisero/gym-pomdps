@@ -44,3 +44,7 @@ class Gym_MultiPOMDP_Test(unittest.TestCase):
                 break
         else:
             raise Exception(f'Episodic Environment did not end (dones={dones})')
+
+
+if __name__ == '__main__':
+    unittest.main()

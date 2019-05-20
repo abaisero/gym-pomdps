@@ -10,3 +10,7 @@ import gym_pomdps
 #     def test_envs(self):
 #         for pomdp in gym_pomdps.list_pomdps:
 #             env = gym.make(pomdp)
+
+
+if __name__ == '__main__':
+    unittest.main()
