@@ -13,9 +13,6 @@ class MultiPOMDP(gym.Wrapper):
         super().__init__(env)
         self.ntrajectories = ntrajectories
 
-    def __getattr__(self, attr):
-        return getattr(self.env, attr)
-
     def reset(self, ntrajectories=None):
         self.state = self.reset_functional(ntrajectories)
 
