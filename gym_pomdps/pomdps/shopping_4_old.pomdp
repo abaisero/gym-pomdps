@@ -2607,25 +2607,25 @@ O: buy: agent_3_3_item_3_1: agent_3_3 1.0
 O: buy: agent_3_3_item_3_2: agent_3_3 1.0
 O: buy: agent_3_3_item_3_3: agent_3_3 1.0
 
-R: query: *: *: * -5.0
+R: query: *: *: * -2.0
 R: left: *: *: * -1.0
 R: right: *: *: * -1.0
 R: up: *: *: * -1.0
 R: down: *: *: * -1.0
-R: buy: *: *: * -50.0
-R: buy: agent_0_0_item_0_0: *: * 100.0
-R: buy: agent_0_1_item_0_1: *: * 100.0
-R: buy: agent_0_2_item_0_2: *: * 100.0
-R: buy: agent_0_3_item_0_3: *: * 100.0
-R: buy: agent_1_0_item_1_0: *: * 100.0
-R: buy: agent_1_1_item_1_1: *: * 100.0
-R: buy: agent_1_2_item_1_2: *: * 100.0
-R: buy: agent_1_3_item_1_3: *: * 100.0
-R: buy: agent_2_0_item_2_0: *: * 100.0
-R: buy: agent_2_1_item_2_1: *: * 100.0
-R: buy: agent_2_2_item_2_2: *: * 100.0
-R: buy: agent_2_3_item_2_3: *: * 100.0
-R: buy: agent_3_0_item_3_0: *: * 100.0
-R: buy: agent_3_1_item_3_1: *: * 100.0
-R: buy: agent_3_2_item_3_2: *: * 100.0
-R: buy: agent_3_3_item_3_3: *: * 100.0
+R: buy: *: *: * -5.0
+R: buy: agent_0_0_item_0_0: *: * 10.0
+R: buy: agent_0_1_item_0_1: *: * 10.0
+R: buy: agent_0_2_item_0_2: *: * 10.0
+R: buy: agent_0_3_item_0_3: *: * 10.0
+R: buy: agent_1_0_item_1_0: *: * 10.0
+R: buy: agent_1_1_item_1_1: *: * 10.0
+R: buy: agent_1_2_item_1_2: *: * 10.0
+R: buy: agent_1_3_item_1_3: *: * 10.0
+R: buy: agent_2_0_item_2_0: *: * 10.0
+R: buy: agent_2_1_item_2_1: *: * 10.0
+R: buy: agent_2_2_item_2_2: *: * 10.0
+R: buy: agent_2_3_item_2_3: *: * 10.0
+R: buy: agent_3_0_item_3_0: *: * 10.0
+R: buy: agent_3_1_item_3_1: *: * 10.0
+R: buy: agent_3_2_item_3_2: *: * 10.0
+R: buy: agent_3_3_item_3_3: *: * 10.0

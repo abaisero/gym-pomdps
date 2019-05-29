@@ -195,13 +195,13 @@ O: buy: agent_1_1_item_0_1: agent_1_1 1.0
 O: buy: agent_1_1_item_1_0: agent_1_1 1.0
 O: buy: agent_1_1_item_1_1: agent_1_1 1.0
 
-R: query: *: *: * -5.0
+R: query: *: *: * -2.0
 R: left: *: *: * -1.0
 R: right: *: *: * -1.0
 R: up: *: *: * -1.0
 R: down: *: *: * -1.0
-R: buy: *: *: * -50.0
-R: buy: agent_0_0_item_0_0: *: * 100.0
-R: buy: agent_0_1_item_0_1: *: * 100.0
-R: buy: agent_1_0_item_1_0: *: * 100.0
-R: buy: agent_1_1_item_1_1: *: * 100.0
+R: buy: *: *: * -5.0
+R: buy: agent_0_0_item_0_0: *: * 10.0
+R: buy: agent_0_1_item_0_1: *: * 10.0
+R: buy: agent_1_0_item_1_0: *: * 10.0
+R: buy: agent_1_1_item_1_1: *: * 10.0
