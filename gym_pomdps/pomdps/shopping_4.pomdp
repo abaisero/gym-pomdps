@@ -16,9 +16,9 @@
 # otherwise position of agent.
 
 # This specific file was generated with parameters:
-# Namespace(gamma=0.95, n=4)
+# Namespace(gamma=0.99, n=4)
 
-discount: 0.95
+discount: 0.99
 values: reward
 states: 256
 actions: query left right up down buy

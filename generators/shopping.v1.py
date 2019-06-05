@@ -22,7 +22,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Shopping')
     parser.add_argument('n', type=int, default=None)
     # parser.add_argument('--episodic', action='store_true')
-    parser.add_argument('--gamma', type=float, default=.95)
+    parser.add_argument('--gamma', type=float, default=.99)
     config = parser.parse_args()
 
     # TODO change size to width and height
