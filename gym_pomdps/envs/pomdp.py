@@ -26,6 +26,8 @@ class POMDP(gym.Env):
         self.observation_space = spaces.Discrete(len(model.observations))
         self.reward_range = model.R.min(), model.R.max()
 
+        self.rewards_dict = {r: i for i, r in enumerate(np.unique(model.R))}
+
         if model.start is None:
             self.start = np.full(self.state_space.n, 1 / self.state_space.n)
         else:
@@ -70,4 +72,7 @@ class POMDP(gym.Env):
         if done:
             state1 = -1
 
-        return state1, obs, reward, done, {}
+        reward_cat = self.rewards_dict[reward]
+        info = dict(reward_cat=reward_cat)
+
+        return state1, obs, reward, done, info

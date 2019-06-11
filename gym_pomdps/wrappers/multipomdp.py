@@ -83,4 +83,8 @@ class MultiPOMDP(gym.Wrapper):
         done = np.full(shape, True)
         done[mask] = d
 
-        return state1, obs, reward, done, {}
+        reward_cat = np.full(shape, -1)
+        reward_cat[mask] = [self.rewards_dict[r_] for r_ in r]
+        info = dict(reward_cat=reward_cat)
+
+        return state1, obs, reward, done, info

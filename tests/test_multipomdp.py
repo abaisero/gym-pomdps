@@ -64,11 +64,10 @@ class Gym_MultiPOMDP_Test(unittest.TestCase):
 
         outputs1, outputs2 = outputs
         for (o1, r1, done1, info1), (o2, r2, done2, info2) in zip(*outputs):
-            np.testing.assert_equal(o1, o2)
-            np.testing.assert_equal(r1, r2)
-            np.testing.assert_equal(done1, done2)
-            self.assertEqual(info1, info2)
-
+            np.testing.assert_array_equal(o1, o2)
+            np.testing.assert_array_equal(r1, r2)
+            np.testing.assert_array_equal(done1, done2)
+            np.testing.assert_equal(info1, info2)
 
     def test_consistency(self):
         seed = 17
@@ -91,10 +90,10 @@ class Gym_MultiPOMDP_Test(unittest.TestCase):
 
         outputs = zip(outputs1, outputs2)
         for (o1, r1, done1, info1), (o2, r2, done2, info2) in outputs:
-            np.testing.assert_equal(o1, o2)
-            np.testing.assert_equal(r1, r2)
-            np.testing.assert_equal(done1, done2)
-            self.assertEqual(info1, info2)
+            np.testing.assert_array_equal(o1, o2)
+            np.testing.assert_array_equal(r1, r2)
+            np.testing.assert_array_equal(done1, done2)
+            np.testing.assert_equal(info1, info2)
 
 
 if __name__ == '__main__':
