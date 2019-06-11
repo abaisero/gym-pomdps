@@ -7,7 +7,7 @@ import numpy as np
 class MultiPOMDP(gym.Wrapper):
     """Simulates multiple POMDP trajectories at the same time."""
     def __init__(self, env, ntrajectories=None):
-        if not isinstance(env, POMDP):
+        if not isinstance(env.unwrapped, POMDP):
             raise TypeError(f'Input env is not a POMDP ({type(env)})')
 
         super().__init__(env)
@@ -63,6 +63,15 @@ class MultiPOMDP(gym.Wrapper):
                        for p in self.env.T[s, a]])
         o = np.array([self.np_random.multinomial(1, p).argmax()
                       for p in self.env.O[s, a, s1]])
+        # NOTE below is the same but unified in single sampling op; requires TO
+        # s1, o = np.array([
+        #     divmod(
+        #         self.np_random.multinomial(1, p.ravel()).argmax(),
+        #         self.observation_space.n,
+        #     )
+        #     for p in self.env.TO[s, a]
+        # ]).T
+
         r = self.env.R[s, a, s1, o]
 
         if self.env.episodic:

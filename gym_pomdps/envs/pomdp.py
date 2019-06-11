@@ -33,8 +33,13 @@ class POMDP(gym.Env):
         else:
             self.start = model.start
         self.T = model.T.transpose(1, 0, 2).copy()
-        self.O = np.stack([model.O] * self.state_space.n)
+        self.O = np.expand_dims(model.O, axis=0).repeat(self.state_space.n, axis=0)
         self.R = model.R.transpose(1, 0, 2, 3).copy()
+
+        # NOTE currently elsewhere
+        # self.TO = np.expand_dims(self.T, axis=-1) * self.O
+        # self.EO = self.TO.sum(-2)
+        # self.ER = (self.TO * self.R).sum((-2, -1))
 
         if episodic:
             self.D = model.reset.T.copy()  # only if episodic
@@ -61,11 +66,17 @@ class POMDP(gym.Env):
         if not 0 <= state < self.state_space.n:
             raise ValueError(f'State ({state}) outside of bounds.')
 
-        # TODO better to unify in a single TO matrix..
         state1 = self.np_random.multinomial(
             1, self.T[state, action]).argmax().item()
         obs = self.np_random.multinomial(
             1, self.O[state, action, state1]).argmax().item()
+        # NOTE below is the same but unified in single sampling op; requires TO
+        # state1, obs = divmod(
+        #     self.np_random.multinomial(
+        #         1, self.TO[state, action].ravel()).argmax().item(),
+        #     self.observation_space.n,
+        # )
+
         reward = self.R[state, action, state1, obs].item()
 
         done = self.D[state, action].item() if self.episodic else False
