@@ -4,12 +4,11 @@ import itertools as itt
 
 import indextools
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Shopping')
     parser.add_argument('n', type=int, default=None)
     # parser.add_argument('--episodic', action='store_true')
-    parser.add_argument('--gamma', type=float, default=.99)
+    parser.add_argument('--gamma', type=float, default=0.99)
     config = parser.parse_args()
 
     # TODO change size to width and height
@@ -17,14 +16,10 @@ if __name__ == '__main__':
     assert 0 < config.gamma <= 1
 
     pos_space = indextools.JointNamedSpace(
-        x=indextools.RangeSpace(config.n),
-        y=indextools.RangeSpace(config.n),
+        x=indextools.RangeSpace(config.n), y=indextools.RangeSpace(config.n)
     )
 
-    state_space = indextools.JointNamedSpace(
-        agent=pos_space,
-        item=pos_space,
-    )
+    state_space = indextools.JointNamedSpace(agent=pos_space, item=pos_space)
 
     def pstr(p):
         return f'{p.x}_{p.y}'
@@ -43,7 +38,8 @@ if __name__ == '__main__':
     # the action!
     obs_space = pos_space
 
-    print("""# Shopping Environment;
+    print(
+        """# Shopping Environment;
 
 # The agent is in a store and needs to remember which item to purchase
 # (preselected at the beginning of the environment).  A reactive policy with
@@ -58,7 +54,8 @@ if __name__ == '__main__':
 # current cell {`buy`}.
 
 # Observation-space (n ** 2) : if `query` action is selected, position of item;
-# otherwise position of agent.""")
+# otherwise position of agent."""
+    )
 
     print()
     print(f'# This specific file was generated with parameters:')
@@ -72,8 +69,9 @@ if __name__ == '__main__':
     print(f'observations: {obs_space.nelems}')
     # print(f'observations: {" ".join(ostr(o) for o in obs_space.elems)}')
 
-    start_states = [s for s in state_space.elems
-                    if s.agent.x == 0 and s.agent.y == 0]
+    start_states = [
+        s for s in state_space.elems if s.agent.x == 0 and s.agent.y == 0
+    ]
     pstart_states = 1 / len(start_states)
 
     # START
@@ -141,8 +139,9 @@ if __name__ == '__main__':
 
     #     if a != 'query' and s1.agent == o:
     #         print(f'O: {a.value}: {s1.idx}: {o.idx} 1.0')
-    for a, s1, o in itt.product(action_space.elems, state_space.elems,
-                                obs_space.elems):
+    for a, s1, o in itt.product(
+        action_space.elems, state_space.elems, obs_space.elems
+    ):
         if a == 'query' and s1.item == o:
             print(f'O: {a.value}: {s1.idx}: {o.idx} 1.0')
             # print(f'O: {a.value}: {sstr(s1)}: {ostr(o)} 1.0')

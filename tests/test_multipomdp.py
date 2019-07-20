@@ -6,7 +6,6 @@ import numpy.random as rnd
 import gym
 import gym_pomdps
 
-
 # TODO switch to testing the _functionsl methods
 
 
@@ -25,9 +24,10 @@ class Gym_MultiPOMDP_Test(unittest.TestCase):
                 obs, rewards, dones, infos = env.step(actions)
 
                 if dones.any():
-                    raise Exception('Non-episodic Environment should not end '
-                                    f'(dones={dones})')
-
+                    raise Exception(
+                        'Non-episodic Environment should not end '
+                        f'(dones={dones})'
+                    )
 
     def test_run_episodic(self):
         ntrajectories = 5
@@ -44,7 +44,6 @@ class Gym_MultiPOMDP_Test(unittest.TestCase):
                 break
         else:
             raise Exception(f'Episodic Environment did not end (dones={dones})')
-
 
     def test_seed(self):
         seed = 17

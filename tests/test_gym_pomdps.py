@@ -1,9 +1,8 @@
-import unittest
 import random
+import unittest
 
 import gym
 import gym_pomdps
-
 
 # TODO switch to testing the _functionsl methods
 
@@ -42,7 +41,8 @@ class Gym_POMDP_Test(unittest.TestCase):
         for i in range(100):
             a = random.randint(0, env.action_space.n - 1)
             o, r, done, info = env.step(a)
-            if done: break
+            if done:
+                break
 
         if not done:
             raise Exception('Episodic Environment did not end')

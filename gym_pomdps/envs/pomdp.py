@@ -1,9 +1,9 @@
+import numpy as np
+
 import gym
 from gym import spaces
 from gym.utils import seeding
-
 from rl_parsers.pomdp import parse
-import numpy as np
 
 
 class POMDP(gym.Env):
@@ -33,7 +33,9 @@ class POMDP(gym.Env):
         else:
             self.start = model.start
         self.T = model.T.transpose(1, 0, 2).copy()
-        self.O = np.expand_dims(model.O, axis=0).repeat(self.state_space.n, axis=0)
+        self.O = np.expand_dims(model.O, axis=0).repeat(
+            self.state_space.n, axis=0
+        )
         self.R = model.R.transpose(1, 0, 2, 3).copy()
 
         # NOTE currently elsewhere
@@ -60,16 +62,22 @@ class POMDP(gym.Env):
 
     def step_functional(self, state, action):
         if state == -1:
-            raise ValueError('State (-1) is not initialized.  '
-                             'Perhaps the POMDP was not reset?')
+            raise ValueError(
+                'State (-1) is not initialized.  '
+                'Perhaps the POMDP was not reset?'
+            )
 
         if not 0 <= state < self.state_space.n:
             raise ValueError(f'State ({state}) outside of bounds.')
 
-        state1 = self.np_random.multinomial(
-            1, self.T[state, action]).argmax().item()
-        obs = self.np_random.multinomial(
-            1, self.O[state, action, state1]).argmax().item()
+        state1 = (
+            self.np_random.multinomial(1, self.T[state, action]).argmax().item()
+        )
+        obs = (
+            self.np_random.multinomial(1, self.O[state, action, state1])
+            .argmax()
+            .item()
+        )
         # NOTE below is the same but unified in single sampling op; requires TO
         # state1, obs = divmod(
         #     self.np_random.multinomial(

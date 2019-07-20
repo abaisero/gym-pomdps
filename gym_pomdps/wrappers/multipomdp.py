@@ -1,11 +1,12 @@
+import numpy as np
+
 import gym
 from gym_pomdps.envs import POMDP
-
-import numpy as np
 
 
 class MultiPOMDP(gym.Wrapper):
     """Simulates multiple POMDP trajectories at the same time."""
+
     def __init__(self, env, ntrajectories=None):
         if not isinstance(env.unwrapped, POMDP):
             raise TypeError(f'Input env is not a POMDP ({type(env)})')
@@ -25,14 +26,18 @@ class MultiPOMDP(gym.Wrapper):
             ntrajectories = self.ntrajectories
 
         if ntrajectories is None:
-            raise ValueError('Number of trajectories ({ntrajectories}) not set.')
+            raise ValueError(
+                'Number of trajectories ({ntrajectories}) not set.'
+            )
 
         if self.env.start is None:
             state = self.np_random.randint(
-                self.state_space.n, size=self.ntrajectories)
+                self.state_space.n, size=self.ntrajectories
+            )
         else:
             state = self.np_random.multinomial(
-                1, self.env.start, size=self.ntrajectories).argmax(1)
+                1, self.env.start, size=self.ntrajectories
+            ).argmax(1)
         return state
 
     def step_functional(self, state, action):
@@ -43,26 +48,40 @@ class MultiPOMDP(gym.Wrapper):
 
         # episodic POMDP does not support any -1
         if not (self.env.episodic or mask.all()):
-            raise ValueError(f'Non-episodic POMDP does not support '
-                             'uninitialized states (-1)'
-                             'Perhaps the POMDP was not reset?')
+            raise ValueError(
+                f'Non-episodic POMDP does not support '
+                'uninitialized states (-1)'
+                'Perhaps the POMDP was not reset?'
+            )
 
         # all -1s is never ok
         if not mask.any():
-            raise ValueError(f'All states are all not initialized (-1).  '
-                             'Perhaps the POMDP was not reset?')
+            raise ValueError(
+                f'All states are all not initialized (-1).  '
+                'Perhaps the POMDP was not reset?'
+            )
 
         # unmasked states should be within bounds
         s, a = state[mask], action[mask]
         if not ((0 <= s) & (s < self.state_space.n)).all():
-            raise ValueError(f'State (min={s.min()}, max={s.max()}) '
-                             'outside of bounds.  '
-                             'Perhaps the POMDP was not reset?')
+            raise ValueError(
+                f'State (min={s.min()}, max={s.max()}) '
+                'outside of bounds.  '
+                'Perhaps the POMDP was not reset?'
+            )
 
-        s1 = np.array([self.np_random.multinomial(1, p).argmax()
-                       for p in self.env.T[s, a]])
-        o = np.array([self.np_random.multinomial(1, p).argmax()
-                      for p in self.env.O[s, a, s1]])
+        s1 = np.array(
+            [
+                self.np_random.multinomial(1, p).argmax()
+                for p in self.env.T[s, a]
+            ]
+        )
+        o = np.array(
+            [
+                self.np_random.multinomial(1, p).argmax()
+                for p in self.env.O[s, a, s1]
+            ]
+        )
         # NOTE below is the same but unified in single sampling op; requires TO
         # s1, o = np.array([
         #     divmod(

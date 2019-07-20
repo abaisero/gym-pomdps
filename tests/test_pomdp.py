@@ -3,7 +3,6 @@ import unittest
 import gym
 import gym_pomdps
 
-
 # TODO simulate stuff!
 # write test suite for specific envs...
 # class POMDP_Test(unittest.TestCase):

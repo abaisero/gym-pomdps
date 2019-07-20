@@ -1,9 +1,10 @@
 import re
-from pkg_resources import resource_listdir, resource_filename, resource_isdir
+
+from pkg_resources import resource_filename, resource_isdir, resource_listdir
 
 from .envs import POMDP
+from .envs.registration import env_list, register
 from .wrappers import MultiPOMDP
-from .envs.registration import register, env_list
 
 
 def list_pomdps():
@@ -11,8 +12,9 @@ def list_pomdps():
 
 
 def is_pomdp(name):
-    return (name.upper().endswith('.POMDP') and
-            not resource_isdir('gym_pomdps.pomdps', name))
+    return name.upper().endswith('.POMDP') and not resource_isdir(
+        'gym_pomdps.pomdps', name
+    )
 
 
 fnames = filter(is_pomdp, resource_listdir('gym_pomdps.pomdps', ''))

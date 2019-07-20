@@ -8,11 +8,14 @@ import indextools
 def pfmt(p):
     return f'{p.x}_{p.y}'
 
+
 def sfmt(s):
     return f'agent_{pfmt(s.agent)}_item_{pfmt(s.item)}'
 
+
 def afmt(a):
     return a.value
+
 
 def ofmt(o):
     return f'{o.postype}_{pfmt(o.pos)}'
@@ -22,7 +25,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Shopping')
     parser.add_argument('n', type=int, default=None)
     # parser.add_argument('--episodic', action='store_true')
-    parser.add_argument('--gamma', type=float, default=.99)
+    parser.add_argument('--gamma', type=float, default=0.99)
     config = parser.parse_args()
 
     # TODO change size to width and height
@@ -30,24 +33,17 @@ if __name__ == '__main__':
     assert 0 < config.gamma <= 1
 
     pos_space = indextools.JointNamedSpace(
-        x=indextools.RangeSpace(config.n),
-        y=indextools.RangeSpace(config.n),
+        x=indextools.RangeSpace(config.n), y=indextools.RangeSpace(config.n)
     )
 
-    state_space = indextools.JointNamedSpace(
-        agent=pos_space,
-        item=pos_space,
-    )
+    state_space = indextools.JointNamedSpace(agent=pos_space, item=pos_space)
 
     actions = 'query', 'left', 'right', 'up', 'down', 'buy'
     action_space = indextools.DomainSpace(actions)
 
     postypes = 'agent', 'item'
     postype_space = indextools.DomainSpace(postypes)
-    obs_space = indextools.JointNamedSpace(
-        postype=postype_space,
-        pos=pos_space,
-    )
+    obs_space = indextools.JointNamedSpace(postype=postype_space, pos=pos_space)
 
     # print('states')
     # for s in state_space.elems:
@@ -64,7 +60,8 @@ if __name__ == '__main__':
     # import sys
     # sys.exit(0)
 
-    print("""# Shopping Environment;
+    print(
+        """# Shopping Environment;
 
 # The agent navigates a gridworld store with the goal of purchasing an item at
 # an unknown position.  Observations regarding the object position can be
@@ -100,8 +97,9 @@ if __name__ == '__main__':
     # print(f'observations: {obs_space.nelems}')
     print(f'observations: {" ".join(ofmt(o) for o in obs_space.elems)}')
 
-    start_states = [s for s in state_space.elems
-                    if s.agent.x == 0 and s.agent.y == 0]
+    start_states = [
+        s for s in state_space.elems if s.agent.x == 0 and s.agent.y == 0
+    ]
     # pstart_states = 1 / len(start_states)
 
     # START
@@ -147,8 +145,9 @@ if __name__ == '__main__':
 
     #     if a != 'query' and s1.agent == o:
     #         print(f'O: {a.value}: {s1.idx}: {o.idx} 1.0')
-    for a, s1, o in itt.product(action_space.elems, state_space.elems,
-                                obs_space.elems):
+    for a, s1, o in itt.product(
+        action_space.elems, state_space.elems, obs_space.elems
+    ):
         if a == 'query' and o.postype == 'item' and s1.item == o.pos:
             print(f'O: {afmt(a)}: {sfmt(s1)}: {ofmt(o)} 1.0')
         if a != 'query' and o.postype == 'agent' and s1.agent == o.pos:
