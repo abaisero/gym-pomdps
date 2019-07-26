@@ -7,14 +7,11 @@ states: tiger-left tiger-right
 actions: listen open-left open-right
 observations: obs-left obs-right
 
-T:listen
-identity
+start:uniform
 
-T:open-left
-uniform
-
-T:open-right
-uniform
+T:listen identity
+T: open-left: * reset
+T: open-right: * reset
 
 O:listen
 0.85 0.15
