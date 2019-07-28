@@ -102,10 +102,12 @@ if __name__ == '__main__':
                 if 0 <= s.cell.value < config.n:
                     s1 = s.copy()
                     s1.cell.value += 1
+                    print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
                 elif s.cell.value == cell_space.nelems - config.n - 1:
                     s1 = s.copy()
                     s1.cell.value = 0
+                    print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
         elif a == 'S':
@@ -113,10 +115,12 @@ if __name__ == '__main__':
                 if 0 < s.cell.value <= config.n:
                     s1 = s.copy()
                     s1.cell.value -= 1
+                    print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
                 elif s.cell.value == 0:
                     s1 = s.copy()
                     s1.cell.value = cell_space.nelems - config.n - 1
+                    print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
         elif a == 'E':
@@ -124,10 +128,12 @@ if __name__ == '__main__':
                 if config.n + 1 <= s.cell.value < 2 * config.n:
                     s1 = s.copy()
                     s1.cell.value -= 1
+                    print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
                 if s.cell.value == config.n:
                     s1 = s.copy()
                     s1.cell.value = 2 * config.n + 1
+                    print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
                 if (
                     2 * config.n < s.cell.value < 3 * config.n
@@ -135,6 +141,7 @@ if __name__ == '__main__':
                 ):
                     s1 = s.copy()
                     s1.cell.value += 1
+                    print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
         elif a == 'W':
@@ -142,10 +149,12 @@ if __name__ == '__main__':
                 if config.n <= s.cell.value < 2 * config.n:
                     s1 = s.copy()
                     s1.cell.value += 1
+                    print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
                 elif s.cell.value == 2 * config.n + 1:
                     s1 = s.copy()
                     s1.cell.value = config.n
+                    print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
                 elif (
                     2 * config.n < s.cell.value <= 3 * config.n
@@ -153,6 +162,7 @@ if __name__ == '__main__':
                 ):
                     s1 = s.copy()
                     s1.cell.value -= 1
+                    print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
     for s in state_space.elems:
