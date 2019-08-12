@@ -1,6 +1,6 @@
+import gym
 import numpy as np
 
-import gym
 from gym_pomdps.envs import POMDP
 
 
@@ -13,6 +13,7 @@ class MultiPOMDP(gym.Wrapper):
 
         super().__init__(env)
         self.ntrajectories = ntrajectories
+        self.state = np.full([ntrajectories], -1)
 
     def reset(self, ntrajectories=None):
         self.state = self.reset_functional(ntrajectories)
@@ -41,78 +42,60 @@ class MultiPOMDP(gym.Wrapper):
         return state
 
     def step_functional(self, state, action):
-        shape = state.shape
+        if ((state == -1) != (action == -1)).any():
+            raise ValueError('Invalid state-action pair ({state}, {action}).')
 
-        # mask for non-previourly-completed episodes
+        shape = state.shape
         mask = state != -1
 
-        # episodic POMDP does not support any -1
-        if not (self.env.episodic or mask.all()):
-            raise ValueError(
-                f'Non-episodic POMDP does not support '
-                'uninitialized states (-1)'
-                'Perhaps the POMDP was not reset?'
-            )
-
-        # all -1s is never ok
-        if not mask.any():
-            raise ValueError(
-                f'All states are all not initialized (-1).  '
-                'Perhaps the POMDP was not reset?'
-            )
-
-        # unmasked states should be within bounds
-        s, a = state[mask], action[mask]
-        if not ((0 <= s) & (s < self.state_space.n)).all():
-            raise ValueError(
-                f'State (min={s.min()}, max={s.max()}) '
-                'outside of bounds.  '
-                'Perhaps the POMDP was not reset?'
-            )
-
-        s1 = np.array(
-            [
-                self.np_random.multinomial(1, p).argmax()
-                for p in self.env.T[s, a]
-            ]
-        )
-        o = np.array(
-            [
-                self.np_random.multinomial(1, p).argmax()
-                for p in self.env.O[s, a, s1]
-            ]
-        )
-        # NOTE below is the same but unified in single sampling op; requires TO
-        # s1, o = np.array([
-        #     divmod(
-        #         self.np_random.multinomial(1, p.ravel()).argmax(),
-        #         self.observation_space.n,
-        #     )
-        #     for p in self.env.TO[s, a]
-        # ]).T
-
-        r = self.env.R[s, a, s1, o]
-
-        if self.env.episodic:
-            d = self.env.D[s, a]
-            s1[d] = -1
-        else:
-            d = np.zeros(mask.sum(), dtype=bool)
-
         state1 = np.full(shape, -1)
-        state1[mask] = s1
-
         obs = np.full(shape, -1)
-        obs[mask] = o
-
-        reward = np.full(shape, float('nan'))
-        reward[mask] = r
-
-        done = np.full(shape, True)
-        done[mask] = d
-
+        reward = np.full(shape, 0.0)
         reward_cat = np.full(shape, -1)
-        reward_cat[mask] = [self.rewards_dict[r_] for r_ in r]
-        info = dict(reward_cat=reward_cat)
+        done = np.full(shape, True)
 
+        if mask.any():
+            # unmasked states should be within bounds
+            s, a = state[mask], action[mask]
+            assert ((s >= 0) & (s < self.state_space.n)).all()
+            assert ((a >= 0) & (a < self.action_space.n)).all()
+
+            s1 = np.array(
+                [
+                    self.np_random.multinomial(1, p).argmax()
+                    for p in self.env.T[s, a]
+                ]
+            )
+            o = np.array(
+                [
+                    self.np_random.multinomial(1, p).argmax()
+                    for p in self.env.O[s, a, s1]
+                ]
+            )
+            # NOTE below is the same but unified in single sampling op; requires TO
+            # s1, o = np.array([
+            #     divmod(
+            #         self.np_random.multinomial(1, p.ravel()).argmax(),
+            #         self.observation_space.n,
+            #     )
+            #     for p in self.env.TO[s, a]
+            # ]).T
+
+            r = self.env.R[s, a, s1, o]
+
+            if self.env.episodic:
+                d = self.env.D[s, a]
+                s1[d] = -1
+            else:
+                d = np.zeros(mask.sum(), dtype=bool)
+
+            state1[mask] = s1
+            obs[mask] = o
+            reward[mask] = r
+            done[mask] = d
+
+            reward_cat[mask] = [self.rewards_dict[r_] for r_ in r]
+            info = dict(reward_cat=reward_cat)
+
+        info = dict(reward_cat=reward_cat)
         return state1, obs, reward, done, info

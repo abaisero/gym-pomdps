@@ -1,8 +1,8 @@
-import numpy as np
-
 import gym
+import numpy as np
 from gym import spaces
 from gym.utils import seeding
+
 from rl_parsers.pomdp import parse
 
 
@@ -46,6 +46,8 @@ class POMDP(gym.Env):
         if episodic:
             self.D = model.reset.T.copy()  # only if episodic
 
+        self.state = -1
+
     def seed(self, seed):
         self.np_random, seed_ = seeding.np_random(seed)
         return [seed_]
@@ -61,14 +63,14 @@ class POMDP(gym.Env):
         return self.np_random.multinomial(1, self.start).argmax().item()
 
     def step_functional(self, state, action):
-        if state == -1:
-            raise ValueError(
-                'State (-1) is not initialized.  '
-                'Perhaps the POMDP was not reset?'
-            )
+        if (state == -1) != (action == -1):
+            raise ValueError('Invalid state-action pair ({state}, {action}).')
 
-        if not 0 <= state < self.state_space.n:
-            raise ValueError(f'State ({state}) outside of bounds.')
+        if state == -1 and action == -1:
+            return -1, -1, 0.0, True, None
+
+        assert 0 <= state < self.state_space.n
+        assert 0 <= action < self.action_space.n
 
         state1 = (
             self.np_random.multinomial(1, self.T[state, action]).argmax().item()
