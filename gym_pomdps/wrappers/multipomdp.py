@@ -28,7 +28,7 @@ class MultiPOMDP(gym.Wrapper):
 
         if ntrajectories is None:
             raise ValueError(
-                'Number of trajectories ({ntrajectories}) not set.'
+                f'Number of trajectories ({ntrajectories}) not set.'
             )
 
         if self.env.start is None:
@@ -43,7 +43,7 @@ class MultiPOMDP(gym.Wrapper):
 
     def step_functional(self, state, action):
         if ((state == -1) != (action == -1)).any():
-            raise ValueError('Invalid state-action pair ({state}, {action}).')
+            raise ValueError(f'Invalid state-action pair ({state}, {action}).')
 
         shape = state.shape
         mask = state != -1

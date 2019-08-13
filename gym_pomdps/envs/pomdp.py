@@ -64,7 +64,7 @@ class POMDP(gym.Env):
 
     def step_functional(self, state, action):
         if (state == -1) != (action == -1):
-            raise ValueError('Invalid state-action pair ({state}, {action}).')
+            raise ValueError(f'Invalid state-action pair ({state}, {action}).')
 
         if state == -1 and action == -1:
             return -1, -1, 0.0, True, None
