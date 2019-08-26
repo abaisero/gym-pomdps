@@ -181,10 +181,12 @@ def main():
     # REWARDS
     print()
     for a in action_space.elems:
-        if a == 'W':
+
+        if a == 'E':
             for s in state_space.elems:
                 if s.pos.x == config.n - 1:
                     print(f'R: {afmt(a)}: {sfmt(s)}: *: * 10.0')
+
         elif a == 'sample':
             # TODO how to handle -100.0 actions, like bumping into a wall?
             print(f'R: {afmt(a)}: *: *: * -10.0')
