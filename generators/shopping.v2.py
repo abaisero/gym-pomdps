@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import itertools as itt
+from copy import copy
 
 import indextools
 
@@ -120,7 +121,7 @@ if __name__ == '__main__':
                     print(f'T: {afmt(a)}: {sfmt(s)} reset')
         else:
             for s in state_space.elems:
-                s1 = s.copy()
+                s1 = copy(s)
                 if a == 'left':
                     s1.agent.x.value = max(s1.agent.x.value - 1, 0)
                 elif a == 'right':

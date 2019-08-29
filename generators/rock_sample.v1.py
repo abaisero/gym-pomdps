@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import math
+from copy import copy
 
 import indextools
 
@@ -62,7 +63,7 @@ def main():
             (9, 9),
         ]
     else:
-        raise ValueError('Invalid sizes (n={config.n}, k={config.k})')
+        raise ValueError(f'Invalid sizes (n={config.n}, k={config.k})')
 
     pos_space = indextools.JointNamedSpace(
         x=indextools.RangeSpace(config.n), y=indextools.RangeSpace(config.n)
@@ -113,7 +114,7 @@ def main():
         if a == 'N':
             for s in state_space.elems:
                 if s.pos.y.value < config.n - 1:
-                    s1 = s.copy()
+                    s1 = copy(s)
                     s1.pos.y.value += 1
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
@@ -121,7 +122,7 @@ def main():
         elif a == 'S':
             for s in state_space.elems:
                 if s.pos.y.value > 0:
-                    s1 = s.copy()
+                    s1 = copy(s)
                     s1.pos.y.value -= 1
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
@@ -131,7 +132,7 @@ def main():
                 if s.pos.x == config.n - 1:
                     print(f'T: {afmt(a)}: {sfmt(s)} reset')
                 else:
-                    s1 = s.copy()
+                    s1 = copy(s)
                     s1.pos.x.value += 1
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
@@ -139,7 +140,7 @@ def main():
         elif a == 'W':
             for s in state_space.elems:
                 if s.pos.x.value > 0:
-                    s1 = s.copy()
+                    s1 = copy(s)
                     s1.pos.x.value -= 1
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
@@ -154,7 +155,7 @@ def main():
                     pass
                 else:
                     if s.rocks[rock_i]:
-                        s1 = s.copy()
+                        s1 = copy(s)
                         s1.rocks[rock_i].value = False
                         print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                         print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')

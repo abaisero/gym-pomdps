@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import itertools as itt
+from copy import copy
 
 import indextools
 
@@ -108,7 +109,7 @@ if __name__ == '__main__':
                     #     # print(f'T: {a.value}: {sstr(s)} {pmatrix}')
         else:
             for s in state_space.elems:
-                s1 = s.copy()
+                s1 = copy(s)
                 if a == 'left' and s1.agent.x.value > 0:
                     s1.agent.x.value -= 1
                 elif a == 'right' and s1.agent.x.value < config.n - 1:
