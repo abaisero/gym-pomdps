@@ -77,7 +77,7 @@ if __name__ == '__main__':
     print(f'actions: {" ".join(afmt(a) for a in action_space.elems)}')
     print(f'observations: {" ".join(ofmt(o) for o in obs_space.elems)}')
 
-    start_states = [s for s in state_space.elems if s.cell == 0]
+    start_states = [s for s in state_space.elems if s.cell.value == 0]
 
     # START
     print()
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     print()
     for a in action_space.elems:
         print(f'T: {afmt(a)} identity')
-        if a == 'N':
+        if a.value == 'N':
             for s in state_space.elems:
                 if 0 <= s.cell.value < config.n:
                     s1 = copy(s)
@@ -111,7 +111,7 @@ if __name__ == '__main__':
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
-        elif a == 'S':
+        elif a.value == 'S':
             for s in state_space.elems:
                 if 0 < s.cell.value <= config.n:
                     s1 = copy(s)
@@ -124,7 +124,7 @@ if __name__ == '__main__':
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
-        elif a == 'E':
+        elif a.value == 'E':
             for s in state_space.elems:
                 if config.n + 1 <= s.cell.value < 2 * config.n:
                     s1 = copy(s)
@@ -145,7 +145,7 @@ if __name__ == '__main__':
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
-        elif a == 'W':
+        elif a.value == 'W':
             for s in state_space.elems:
                 if config.n <= s.cell.value < 2 * config.n:
                     s1 = copy(s)

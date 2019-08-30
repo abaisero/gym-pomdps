@@ -71,7 +71,9 @@ if __name__ == '__main__':
     # print(f'observations: {" ".join(ostr(o) for o in obs_space.elems)}')
 
     start_states = [
-        s for s in state_space.elems if s.agent.x == 0 and s.agent.y == 0
+        s
+        for s in state_space.elems
+        if s.agent.x.value == 0 and s.agent.y.value == 0
     ]
     pstart_states = 1 / len(start_states)
 
@@ -84,9 +86,9 @@ if __name__ == '__main__':
     # TRANSITIONS
     print()
     for a in action_space.elems:
-        if a == 'query':
+        if a.value == 'query':
             print(f'T: {a.value} identity')
-        elif a == 'buy':
+        elif a.value == 'buy':
             print(f'T: {a.value} identity')
             for s in state_space.elems:
                 if s.agent == s.item:
@@ -110,13 +112,13 @@ if __name__ == '__main__':
         else:
             for s in state_space.elems:
                 s1 = copy(s)
-                if a == 'left' and s1.agent.x.value > 0:
+                if a.value == 'left' and s1.agent.x.value > 0:
                     s1.agent.x.value -= 1
-                elif a == 'right' and s1.agent.x.value < config.n - 1:
+                elif a.value == 'right' and s1.agent.x.value < config.n - 1:
                     s1.agent.x.value += 1
-                elif a == 'up' and s1.agent.y.value > 0:
+                elif a.value == 'up' and s1.agent.y.value > 0:
                     s1.agent.y.value -= 1
-                elif a == 'down' and s1.agent.y.value < config.n - 1:
+                elif a.value == 'down' and s1.agent.y.value < config.n - 1:
                     s1.agent.y.value += 1
 
                 # pmatrix = [0.] * state_space.nelems
@@ -143,10 +145,10 @@ if __name__ == '__main__':
     for a, s1, o in itt.product(
         action_space.elems, state_space.elems, obs_space.elems
     ):
-        if a == 'query' and s1.item == o:
+        if a.value == 'query' and s1.item == o:
             print(f'O: {a.value}: {s1.idx}: {o.idx} 1.0')
             # print(f'O: {a.value}: {sstr(s1)}: {ostr(o)} 1.0')
-        if a != 'query' and s1.agent == o:
+        if a.value != 'query' and s1.agent == o:
             print(f'O: {a.value}: {s1.idx}: {o.idx} 1.0')
             # print(f'O: {a.value}: {sstr(s1)}: {ostr(o)} 1.0')
 
@@ -167,9 +169,9 @@ if __name__ == '__main__':
     #             break
 
     for a in action_space.elems:
-        if a == 'query':
+        if a.value == 'query':
             print(f'R: {a.value}: *: *: * -2.0')
-        elif a == 'buy':
+        elif a.value == 'buy':
             print(f'R: {a.value}: *: *: * -5.0')
             for s in state_space.elems:
                 if s.agent == s.item:

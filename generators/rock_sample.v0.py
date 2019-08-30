@@ -93,7 +93,7 @@ def main():
     start_states = [
         s
         for s in state_space.elems
-        if s.pos.x == 0 and s.pos.y == config.n // 2
+        if s.pos.x.value == 0 and s.pos.y.value == config.n // 2
     ]
 
     # START
@@ -105,7 +105,7 @@ def main():
     for a in action_space.elems:
         print(f'T: {afmt(a)} identity')
 
-        if a == 'N':
+        if a.value == 'N':
             for s in state_space.elems:
                 if s.pos.y.value < config.n - 1:
                     s1 = copy(s)
@@ -113,7 +113,7 @@ def main():
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
-        elif a == 'S':
+        elif a.value == 'S':
             for s in state_space.elems:
                 if s.pos.y.value > 0:
                     s1 = copy(s)
@@ -121,9 +121,9 @@ def main():
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
-        elif a == 'E':
+        elif a.value == 'E':
             for s in state_space.elems:
-                if s.pos.x == config.n - 1:
+                if s.pos.x.value == config.n - 1:
                     print(f'T: {afmt(a)}: {sfmt(s)} reset')
                 else:
                     s1 = copy(s)
@@ -131,7 +131,7 @@ def main():
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
-        elif a == 'W':
+        elif a.value == 'W':
             for s in state_space.elems:
                 if s.pos.x.value > 0:
                     s1 = copy(s)
@@ -139,7 +139,7 @@ def main():
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s)} 0.0')
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
-        elif a == 'sample':
+        elif a.value == 'sample':
             for s in state_space.elems:
                 try:
                     rock_i = rock_positions.index(
@@ -183,12 +183,12 @@ def main():
     print()
     for a in action_space.elems:
 
-        if a == 'E':
+        if a.value == 'E':
             for s in state_space.elems:
-                if s.pos.x == config.n - 1:
+                if s.pos.x.value == config.n - 1:
                     print(f'R: {afmt(a)}: {sfmt(s)}: *: * 10.0')
 
-        elif a == 'sample':
+        elif a.value == 'sample':
             # TODO how to handle -100.0 actions, like bumping into a wall?
             print(f'R: {afmt(a)}: *: *: * -10.0')
             for s in state_space.elems:

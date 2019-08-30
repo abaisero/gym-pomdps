@@ -99,7 +99,9 @@ if __name__ == '__main__':
     print(f'observations: {" ".join(ofmt(o) for o in obs_space.elems)}')
 
     start_states = [
-        s for s in state_space.elems if s.agent.x == 0 and s.agent.y == 0
+        s
+        for s in state_space.elems
+        if s.agent.x.value == 0 and s.agent.y.value == 0
     ]
     # pstart_states = 1 / len(start_states)
 
@@ -112,9 +114,9 @@ if __name__ == '__main__':
     # TRANSITIONS
     print()
     for a in action_space.elems:
-        if a == 'query':
+        if a.value == 'query':
             print(f'T: {afmt(a)} identity')
-        elif a == 'buy':
+        elif a.value == 'buy':
             print(f'T: {afmt(a)} identity')
             for s in state_space.elems:
                 if s.agent == s.item:
@@ -122,13 +124,13 @@ if __name__ == '__main__':
         else:
             for s in state_space.elems:
                 s1 = copy(s)
-                if a == 'left':
+                if a.value == 'left':
                     s1.agent.x.value = max(s1.agent.x.value - 1, 0)
-                elif a == 'right':
+                elif a.value == 'right':
                     s1.agent.x.value = min(s1.agent.x.value + 1, config.n - 1)
-                elif a == 'up':
+                elif a.value == 'up':
                     s1.agent.y.value = min(s1.agent.y.value + 1, config.n - 1)
-                elif a == 'down':
+                elif a.value == 'down':
                     s1.agent.y.value = max(s1.agent.y.value - 1, 0)
 
                 print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
@@ -149,17 +151,25 @@ if __name__ == '__main__':
     for a, s1, o in itt.product(
         action_space.elems, state_space.elems, obs_space.elems
     ):
-        if a == 'query' and o.postype == 'item' and s1.item == o.pos:
+        if (
+            a.value == 'query'
+            and o.postype.value == 'item'
+            and s1.item == o.pos
+        ):
             print(f'O: {afmt(a)}: {sfmt(s1)}: {ofmt(o)} 1.0')
-        if a != 'query' and o.postype == 'agent' and s1.agent == o.pos:
+        if (
+            a.value != 'query'
+            and o.postype.value == 'agent'
+            and s1.agent == o.pos
+        ):
             print(f'O: {afmt(a)}: {sfmt(s1)}: {ofmt(o)} 1.0')
 
     # REWARDS
     print()
     for a in action_space.elems:
-        if a == 'query':
+        if a.value == 'query':
             print(f'R: {afmt(a)}: *: *: * -2.0')
-        elif a == 'buy':
+        elif a.value == 'buy':
             print(f'R: {afmt(a)}: *: *: * -50.0')
             for s in state_space.elems:
                 if s.agent == s.item:
