@@ -1,5 +1,5 @@
 gym==0.14.0
--e git+git@github.com:abaisero/indextools.git@master#egg=indextools
+git+https://github.com/abaisero/indextools.git@master#egg=indextools
 numpy>=1.17
 ply==3.11
--e git+git@github.com:abaisero/rl_parsers.git@master#egg=rl_parsers
+git+https://github.com/abaisero/rl_parsers.git@master#egg=rl_parsers
