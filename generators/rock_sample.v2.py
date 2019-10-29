@@ -32,7 +32,19 @@ def main():
     assert config.n > 1
     assert config.k > 0
 
-    if config.n == 5 and config.k == 6:
+    if config.n == 5 and config.k == 4:
+
+        # #######
+        # #  R  #
+        # #R    #
+        # #A    #
+        # #  R  #
+        # #    R#
+        # #######
+
+        base, d0 = 2, 20
+        rock_positions = [(0, 1), (2, 0), (2, 3), (4, 4)]
+    elif config.n == 5 and config.k == 6:
 
         # #######
         # #  R  #
