@@ -35,6 +35,12 @@ for fname in fnames:
     )
 
     register(
+        id=f'POMDP-{name}-continuing-v{version}',
+        entry_point='gym_pomdps.envs:POMDP',
+        kwargs=dict(path=fpath, episodic=False),
+    )
+
+    register(
         id=f'POMDP-{name}-episodic-v{version}',
         entry_point='gym_pomdps.envs:POMDP',
         kwargs=dict(path=fpath, episodic=True),
