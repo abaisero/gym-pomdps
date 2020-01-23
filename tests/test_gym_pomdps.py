@@ -19,6 +19,8 @@ class Gym_POMDP_Test(unittest.TestCase):
         self._test_functional(env)
         env = gym.make('POMDP-shopping_2-episodic-v0')
         self._test_functional(env)
+        env = gym.make('POMDP-arrowtrail-continuing-v0')
+        self._test_run(env)
 
     def _test_functional(self, env):
         for _ in range(20):
@@ -65,6 +67,8 @@ class Gym_POMDP_Test(unittest.TestCase):
         env = gym.make('POMDP-shopping_2-v0')
         self._test_run(env)
         env = gym.make('POMDP-shopping_2-episodic-v0')
+        self._test_run(env)
+        env = gym.make('POMDP-arrowtrail-continuing-v0')
         self._test_run(env)
 
     def _test_run(self, env):
