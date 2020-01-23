@@ -92,7 +92,6 @@ if __name__ == '__main__':
     # top_left_states = [s for s in state_space.elems if True]
     # top_right_states = [s for s in state_space.elems if True]
     # bottom_states = [s for s in state_space.elems if True]
-    # __import__("ipdb").set_trace()  # XXX BREAKPOINT
 
     # TRANSITIONS
     print()
