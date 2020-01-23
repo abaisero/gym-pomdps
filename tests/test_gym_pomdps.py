@@ -15,7 +15,7 @@ class Gym_POMDP_Test(unittest.TestCase):
             self.assertTrue(pomdp.startswith('POMDP'))
 
     def test_functional(self):
-        env = gym.make('POMDP-shopping_2-v0')
+        env = gym.make('POMDP-shopping_2-continuing-v0')
         self._test_functional(env)
         env = gym.make('POMDP-shopping_2-episodic-v0')
         self._test_functional(env)
@@ -64,7 +64,7 @@ class Gym_POMDP_Test(unittest.TestCase):
             self.assertTrue(info is None or isinstance(info, dict))
 
     def test_run(self):
-        env = gym.make('POMDP-shopping_2-v0')
+        env = gym.make('POMDP-shopping_2-continuing-v0')
         self._test_run(env)
         env = gym.make('POMDP-shopping_2-episodic-v0')
         self._test_run(env)
@@ -95,7 +95,7 @@ class Gym_POMDP_Test(unittest.TestCase):
                     self.assertTrue(info is None or isinstance(info, dict))
 
     def test_seed(self):
-        env = gym.make('POMDP-tiger-v0')
+        env = gym.make('POMDP-tiger-continuing-v0')
         actions = list(range(env.action_space.n)) * 20
 
         env.seed(17)
