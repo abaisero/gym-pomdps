@@ -4,18 +4,27 @@ import copy
 
 import indextools
 
-grid_base = """
-RRRDRRRRRD
-UDLLUDLLLD
-URRDURDRUD
-UDLLUDLULL
-URRRURRRRD
-ULLLLDLLLD
-RDRRUDRDUD
-UDULLDUDUD
-URRRUDURUD
-ULLLLLULLL
-""".strip().splitlines()
+# arrows: ↑ ↓ ← →
+
+grid_base_arrows = """
+→→→↓→→→→→↓
+↑↓←←↑↓←←←↓
+↑→→↓↑→↓→↑↓
+↑↓←←↑↓←↑←←
+↑→→→↑→→→→↓
+↑←←←←↓←←←↓
+→↓→→↑↓→↓↑↓
+↑↓↑←←↓↑↓↑↓
+↑→→→↑↓↑→↑↓
+↑←←←←←↑←←←
+"""
+
+# converts arrows to UDLR text
+grid_base = (
+    grid_base_arrows.translate(str.maketrans('↑↓←→', 'UDLR'))
+    .strip()
+    .splitlines()
+)
 
 
 def reflect_h(grid):
