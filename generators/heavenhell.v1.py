@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import argparse
-import itertools as itt
 from copy import copy
 
 import indextools
@@ -171,10 +170,6 @@ if __name__ == '__main__':
 
     # OBSERVATIONS
     print()
-    # for s1, o in itt.product(state_space.elems, obs_space.elems):
-    #     if s1.cell.value == cell_space.nelems - 1:
-    #         print(f'O: *: {sfmt(s1)}: {ofmt(o)} 1.0')
-
     for s1 in state_space.elems:
         if s1.cell.value < cell_space.nelems - 1:
             print(f'O: *: {sfmt(s1)}: o{s1.cell.value} 1.0')

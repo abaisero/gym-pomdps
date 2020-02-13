@@ -4,8 +4,7 @@ import argparse
 import shutil
 
 import gym
-
-import gym_pomdps  # pylint: disable=unused-import
+import gym_pomdps
 
 
 def manual_control(env, *, symbolic):

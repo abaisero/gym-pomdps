@@ -1,1 +1,1 @@
-from .pomdp import POMDP
+from .pomdp import *

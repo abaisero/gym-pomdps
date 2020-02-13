@@ -5,11 +5,13 @@ from gym.utils import seeding
 
 from rl_parsers.pomdp import parse
 
+__all__ = ['POMDP']
 
-class POMDP(gym.Env):
+
+class POMDP(gym.Env):  # pylint: disable=abstract-method
     """Environment specified by POMDP file."""
 
-    def __init__(self, path, episodic=False, seed=None):
+    def __init__(self, path, *, episodic, seed=None):
         self.episodic = episodic
         self.seed(seed)
 
@@ -38,17 +40,17 @@ class POMDP(gym.Env):
         )
         self.R = model.R.transpose(1, 0, 2, 3).copy()
 
+        if episodic:
+            self.D = model.reset.T.copy()  # only if episodic
+
         # NOTE currently elsewhere
         # self.TO = np.expand_dims(self.T, axis=-1) * self.O
         # self.EO = self.TO.sum(-2)
         # self.ER = (self.TO * self.R).sum((-2, -1))
 
-        if episodic:
-            self.D = model.reset.T.copy()  # only if episodic
-
         self.state = -1
 
-    def seed(self, seed):
+    def seed(self, seed):  # pylint: disable=signature-differs
         self.np_random, seed_ = seeding.np_random(seed)
         return [seed_]
 
@@ -72,28 +74,28 @@ class POMDP(gym.Env):
         assert 0 <= state < self.state_space.n
         assert 0 <= action < self.action_space.n
 
-        state1 = (
+        state_next = (
             self.np_random.multinomial(1, self.T[state, action]).argmax().item()
         )
         obs = (
-            self.np_random.multinomial(1, self.O[state, action, state1])
+            self.np_random.multinomial(1, self.O[state, action, state_next])
             .argmax()
             .item()
         )
         # NOTE below is the same but unified in single sampling op; requires TO
-        # state1, obs = divmod(
+        # state_next, obs = divmod(
         #     self.np_random.multinomial(
         #         1, self.TO[state, action].ravel()).argmax().item(),
         #     self.observation_space.n,
         # )
 
-        reward = self.R[state, action, state1, obs].item()
+        reward = self.R[state, action, state_next, obs].item()
 
         done = self.D[state, action].item() if self.episodic else False
         if done:
-            state1 = -1
+            state_next = -1
 
         reward_cat = self.rewards_dict[reward]
         info = dict(reward_cat=reward_cat)
 
-        return state1, obs, reward, done, info
+        return state_next, obs, reward, done, info

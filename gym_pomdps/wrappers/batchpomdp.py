@@ -3,41 +3,37 @@ import numpy as np
 
 from gym_pomdps.envs import POMDP
 
+__all__ = ['BatchPOMDP']
 
-class MultiPOMDP(gym.Wrapper):
+
+class BatchPOMDP(gym.Wrapper):
     """Simulates multiple POMDP trajectories at the same time."""
 
-    def __init__(self, env, ntrajectories=None):
+    def __init__(self, env, batch_size):
         if not isinstance(env.unwrapped, POMDP):
-            raise TypeError(f'Input env is not a POMDP ({type(env)})')
+            raise TypeError(f'Env is not a POMDP (got {type(env)}).')
+        if batch_size <= 0:
+            raise ValueError(f'Batch size is not positive (got ({batch_size}).')
 
         super().__init__(env)
-        self.ntrajectories = ntrajectories
-        self.state = np.full([ntrajectories], -1)
+        self.batch_size = batch_size
+        self.state = np.full([batch_size], -1)
 
-    def reset(self, ntrajectories=None):
-        self.state = self.reset_functional(ntrajectories)
+    def reset(self):  # pylint: disable=arguments-differ
+        self.state = self.reset_functional()
 
     def step(self, action):
         self.state, *ret = self.step_functional(self.state, action)
         return ret
 
-    def reset_functional(self, ntrajectories=None):
-        if ntrajectories is None:
-            ntrajectories = self.ntrajectories
-
-        if ntrajectories is None:
-            raise ValueError(
-                f'Number of trajectories ({ntrajectories}) not set.'
-            )
-
+    def reset_functional(self):
         if self.env.start is None:
             state = self.np_random.randint(
-                self.state_space.n, size=self.ntrajectories
+                self.state_space.n, size=self.batch_size
             )
         else:
             state = self.np_random.multinomial(
-                1, self.env.start, size=self.ntrajectories
+                1, self.env.start, size=self.batch_size
             ).argmax(1)
         return state
 

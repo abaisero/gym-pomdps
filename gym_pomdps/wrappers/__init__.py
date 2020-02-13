@@ -1,1 +1,1 @@
-from .multipomdp import MultiPOMDP
+from .batchpomdp import *
