@@ -35,9 +35,12 @@ class POMDP(gym.Env):  # pylint: disable=abstract-method
         else:
             self.start = model.start
         self.T = model.T.transpose(1, 0, 2).copy()
-        self.O = np.expand_dims(model.O, axis=0).repeat(
-            self.state_space.n, axis=0
-        )
+        if model.flags['O_includes_state']:
+            self.O = model.O.transpose(1, 0, 2, 3).copy()
+        else:
+            self.O = np.expand_dims(model.O, axis=0).repeat(
+                self.state_space.n, axis=0
+            )
         self.R = model.R.transpose(1, 0, 2, 3).copy()
 
         if episodic:
