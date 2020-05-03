@@ -23,6 +23,7 @@ def manual_control(env, *, symbolic):
 
     while True:
         env.reset()
+        b = gym_pomdps.belief.belief_init(env)
         print('#' * shutil.get_terminal_size().columns)
         print('## START')
         while True:
@@ -37,8 +38,10 @@ def manual_control(env, *, symbolic):
                     break
 
             o, r, done, info = env.step(a)
+            b = gym_pomdps.belief.belief_step(env, b, a, o)
 
             o = observations[o]
+            print(f'## b = {b}')
             print(f'## o = {o}')
             print(f'## r = {r}')
             if info:

@@ -28,6 +28,10 @@ def belief_step(env, b, a, o) -> np.array:
     :param o:  (*,) batch array of observations
     :rtype:  numpy.array (*, |S|) batch array of next belief-states
     """
+    b = np.asarray(b)
+    a = np.asarray(a)
+    o = np.asarray(o)
+
     if not b.shape[:-1] == a.shape == o.shape:
         raise ValueError('Input array shapes do not match')
 
@@ -54,6 +58,9 @@ def expected_reward(env, b, a) -> np.ndarray:
     :param a:  (*,) batch array of actions
     :rtype: np.ndarray  (*,) batch array of expected rewards
     """
+    b = np.asarray(b)
+    a = np.asarray(a)
+
     if not b.shape[:-1] == a.shape:
         raise ValueError('Input array shapes do not match')
 
@@ -74,6 +81,9 @@ def expected_obs(env, b, a) -> np.ndarray:
     :param a:  (*,) batch array of actions
     :rtype: np.ndarray  (*, O) batch array of observation probabilities
     """
+    b = np.asarray(b)
+    a = np.asarray(a)
+
     if not b.shape[:-1] == a.shape:
         raise ValueError('Input array shapes do not match')
 
