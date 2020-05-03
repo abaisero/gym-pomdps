@@ -44,3 +44,8 @@ experiences to run concurrently.  States, actions, observations, rewards and
 dones are vectorized (with np.array).
 
 NOTE:  This wrapper currently only supports continuing POMDPs.
+
+### BeliefMDP Wrapper
+
+The BeliefMDP wrapper simulates the belief-MDP associated with the given POMDP,
+keeping track of the current belief-state and computing expected rewards.
