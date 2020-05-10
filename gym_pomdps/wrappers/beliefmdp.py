@@ -1,6 +1,12 @@
 import gym
+import numpy as np
 
-from gym_pomdps.belief import belief_init, belief_step, expected_reward
+from gym_pomdps.belief import (
+    belief_init,
+    belief_step,
+    expected_obs,
+    expected_reward,
+)
 from gym_pomdps.envs import POMDP
 
 __all__ = ['BeliefMDP']
@@ -18,12 +24,15 @@ class BeliefMDP(gym.Wrapper):
 
     def reset(self):  # pylint: disable=arguments-differ
         self.env.reset()
-        self.belief = belief_init(self.env, self.state.shape)
+        self.belief = belief_init(self.env, np.asarray(self.state).shape)
         return self.belief
 
     def step(self, action):
-        r = expected_reward(self.env, self.belief, action)
-        o, _, done, info = self.env.step(action)
-        self.belief = belief_step(self.env, self.belief, action, o)
+        observation, reward, done, info = self.env.step(action)
+        info.update({'observation': observation, 'reward': reward})
 
-        return self.belief, r, done, info
+        # NOTE:  compute reward before the step is made!
+        expected_reward_ = expected_reward(self.env, self.belief, action)
+        self.belief = belief_step(self.env, self.belief, action, observation)
+
+        return self.belief, expected_reward_, done, info
