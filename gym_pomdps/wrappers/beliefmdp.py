@@ -1,12 +1,7 @@
 import gym
 import numpy as np
 
-from gym_pomdps.belief import (
-    belief_init,
-    belief_step,
-    expected_obs,
-    expected_reward,
-)
+from gym_pomdps.belief import belief_init, belief_step, expected_reward
 from gym_pomdps.envs import POMDP
 
 __all__ = ['BeliefMDP']
