@@ -11,12 +11,10 @@ __all__ = ['POMDP']
 class POMDP(gym.Env):  # pylint: disable=abstract-method
     """Environment specified by POMDP file."""
 
-    def __init__(self, path, *, episodic, seed=None):
+    def __init__(self, text, *, episodic, seed=None):
+        model = parse(text)
         self.episodic = episodic
         self.seed(seed)
-
-        with open(path) as f:
-            model = parse(f.read())
 
         if model.values == 'cost':
             raise ValueError('Unsupported `cost` values.')

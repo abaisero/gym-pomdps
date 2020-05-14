@@ -34,14 +34,17 @@ for filename in (
     if m is not None:
         name, version = m['name'], m['version']
 
+    with open(path) as f:
+        text = f.read()
+
     register(
         id=f'POMDP-{name}-continuing-v{version}',
         entry_point='gym_pomdps.envs:POMDP',
-        kwargs=dict(path=path, episodic=False),
+        kwargs=dict(text=text, episodic=False),
     )
 
     register(
         id=f'POMDP-{name}-episodic-v{version}',
         entry_point='gym_pomdps.envs:POMDP',
-        kwargs=dict(path=path, episodic=True),
+        kwargs=dict(text=text, episodic=True),
     )
