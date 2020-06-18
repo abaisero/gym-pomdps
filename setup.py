@@ -1,16 +1,16 @@
-import sys
+from setuptools import setup
 
-from setuptools import find_packages, setup
-
-if sys.version_info < (3, 7):
-    sys.stderr.write('Python >= 3.7 is required.')
-    sys.exit(1)
-
+from gym_pomdps import __version__
 
 setup(
-    name='gym_pomdps',
-    version='1.0.0',
-    packages=find_packages(),
+    name='gym-pomdps',
+    version=__version__,
+    description='Gym flat POMDP environments',
+    author='Andrea Baisero',
+    author_email='andrea.baisero@gmail.com',
+    url='https://github.com/abaisero/gym-pomdps',
+    packages=['gym_pomdps'],
     package_data={'': ['*.pomdp']},
-    test_suite='tests',
+    install_requires=['gym', 'numpy', 'one-to-one', 'rl-parsers',],
+    license='MIT',
 )

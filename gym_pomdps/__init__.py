@@ -7,6 +7,8 @@ from .envs import *
 from .envs.registration import env_list, register
 from .wrappers import *
 
+__version__ = '1.0.0'
+
 extension = 'pomdp'
 
 
@@ -32,7 +34,7 @@ for filename in (
     # extract version if any
     m = re.fullmatch(r'(?P<name>.*)\.v(?P<version>\d+)', name)
     if m is not None:
-        name, version = m['name'], m['version']
+        name, version = m['name'], int(m['version'])
 
     with open(path) as f:
         text = f.read()
