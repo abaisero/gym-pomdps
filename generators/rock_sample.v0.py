@@ -3,7 +3,7 @@ import argparse
 import math
 from copy import copy
 
-import indextools
+import one_to_one
 
 
 def sfmt(s):
@@ -98,22 +98,22 @@ def main():
     else:
         raise ValueError(f'Invalid sizes (n={config.n}, k={config.k})')
 
-    pos_space = indextools.JointNamedSpace(
-        x=indextools.RangeSpace(config.n), y=indextools.RangeSpace(config.n)
+    pos_space = one_to_one.NamedTupleSpace(
+        x=one_to_one.RangeSpace(config.n), y=one_to_one.RangeSpace(config.n)
     )
 
-    rock_space = indextools.BoolSpace()
-    rocks_space = indextools.JointSpace(*[rock_space] * config.k)
+    rock_space = one_to_one.BoolSpace()
+    rocks_space = one_to_one.TupleSpace(*[rock_space] * config.k)
 
-    state_space = indextools.JointNamedSpace(pos=pos_space, rocks=rocks_space)
+    state_space = one_to_one.NamedTupleSpace(pos=pos_space, rocks=rocks_space)
 
     actions = ['N', 'S', 'E', 'W', 'sample'] + [
         f'check_{i}' for i in range(config.k)
     ]
-    action_space = indextools.DomainSpace(actions)
+    action_space = one_to_one.DomainSpace(actions)
 
     obs = ['none', 'good', 'bad']
-    obs_space = indextools.DomainSpace(obs)
+    obs_space = one_to_one.DomainSpace(obs)
 
     print(f'# This specific file was generated with parameters:')
     print(f'# {config}')
@@ -121,13 +121,13 @@ def main():
     print(f'discount: {config.gamma}')
     print('values: reward')
 
-    print(f'states: {" ".join(sfmt(s) for s in state_space.elems)}')
-    print(f'actions: {" ".join(afmt(a) for a in action_space.elems)}')
-    print(f'observations: {" ".join(ofmt(o) for o in obs_space.elems)}')
+    print(f'states: {" ".join(sfmt(s) for s in state_space.elems())}')
+    print(f'actions: {" ".join(afmt(a) for a in action_space.elems())}')
+    print(f'observations: {" ".join(ofmt(o) for o in obs_space.elems())}')
 
     start_states = [
         s
-        for s in state_space.elems
+        for s in state_space.elems()
         if s.pos.x.value == 0 and s.pos.y.value == config.n // 2
     ]
 
@@ -137,11 +137,11 @@ def main():
 
     # TRANSITIONS
     print()
-    for a in action_space.elems:
+    for a in action_space.elems():
         print(f'T: {afmt(a)} identity')
 
         if a.value == 'N':
-            for s in state_space.elems:
+            for s in state_space.elems():
                 if s.pos.y.value < config.n - 1:
                     s1 = copy(s)
                     s1.pos.y.value += 1
@@ -149,7 +149,7 @@ def main():
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
         elif a.value == 'S':
-            for s in state_space.elems:
+            for s in state_space.elems():
                 if s.pos.y.value > 0:
                     s1 = copy(s)
                     s1.pos.y.value -= 1
@@ -157,7 +157,7 @@ def main():
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
         elif a.value == 'E':
-            for s in state_space.elems:
+            for s in state_space.elems():
                 if s.pos.x.value == config.n - 1:
                     print(f'T: {afmt(a)}: {sfmt(s)} reset')
                 else:
@@ -167,7 +167,7 @@ def main():
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
         elif a.value == 'W':
-            for s in state_space.elems:
+            for s in state_space.elems():
                 if s.pos.x.value > 0:
                     s1 = copy(s)
                     s1.pos.x.value -= 1
@@ -175,7 +175,7 @@ def main():
                     print(f'T: {afmt(a)}: {sfmt(s)}: {sfmt(s1)} 1.0')
 
         elif a.value == 'sample':
-            for s in state_space.elems:
+            for s in state_space.elems():
                 try:
                     rock_i = rock_positions.index(
                         (s.pos.x.value, s.pos.y.value)
@@ -195,10 +195,10 @@ def main():
     # OBSERVATIONS
     print()
     print('O: *: *: none 1.0')
-    for a in action_space.elems:
+    for a in action_space.elems():
         if a.value.startswith('check_'):
             print(f'O: {afmt(a)}: *: none 0.0')
-            for s1 in state_space.elems:
+            for s1 in state_space.elems():
                 rock_i = int(a.value[len('check_') :])
                 rock_pos = rock_positions[rock_i]
                 rock_good = bool(s1.rocks[rock_i].value)
@@ -216,17 +216,17 @@ def main():
 
     # REWARDS
     print()
-    for a in action_space.elems:
+    for a in action_space.elems():
 
         if a.value == 'E':
-            for s in state_space.elems:
+            for s in state_space.elems():
                 if s.pos.x.value == config.n - 1:
                     print(f'R: {afmt(a)}: {sfmt(s)}: *: * 10.0')
 
         elif a.value == 'sample':
             # TODO how to handle -100.0 actions, like bumping into a wall?
             print(f'R: {afmt(a)}: *: *: * -10.0')
-            for s in state_space.elems:
+            for s in state_space.elems():
                 try:
                     rock_i = rock_positions.index(
                         (s.pos.x.value, s.pos.y.value)

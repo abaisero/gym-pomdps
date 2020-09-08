@@ -2,7 +2,7 @@
 import argparse
 import copy
 
-import indextools
+import one_to_one
 
 # arrows: ↑ ↓ ← →
 
@@ -138,22 +138,22 @@ def main():
     parser.add_argument('--gamma', type=float, default=0.99)
     config = parser.parse_args()
 
-    pos_space = indextools.JointNamedSpace(
-        x=indextools.RangeSpace(10), y=indextools.RangeSpace(10)
+    pos_space = one_to_one.NamedTupleSpace(
+        x=one_to_one.RangeSpace(10), y=one_to_one.RangeSpace(10)
     )
 
-    state_space = indextools.JointNamedSpace(
-        reflect_h=indextools.BoolSpace(),
-        reflect_v=indextools.BoolSpace(),
-        reverse=indextools.BoolSpace(),
+    state_space = one_to_one.NamedTupleSpace(
+        reflect_h=one_to_one.BoolSpace(),
+        reflect_v=one_to_one.BoolSpace(),
+        reverse=one_to_one.BoolSpace(),
         pos=pos_space,
     )
 
     actions = 'up', 'down', 'left', 'right'
-    action_space = indextools.DomainSpace(actions)
+    action_space = one_to_one.DomainSpace(actions)
 
     observations = 'up', 'down', 'left', 'right'
-    obs_space = indextools.DomainSpace(observations)
+    obs_space = one_to_one.DomainSpace(observations)
 
     print(
         """# ArrowTrail Environment;
@@ -184,11 +184,11 @@ def main():
     print(f'discount: {config.gamma}')
     print('values: reward')
 
-    print(f'states: {" ".join(sfmt(s) for s in state_space.elems)}')
+    print(f'states: {" ".join(sfmt(s) for s in state_space.elems())}')
 
-    print(f'actions: {" ".join(afmt(a) for a in action_space.elems)}')
+    print(f'actions: {" ".join(afmt(a) for a in action_space.elems())}')
 
-    print(f'observations: {" ".join(ofmt(o) for o in obs_space.elems)}')
+    print(f'observations: {" ".join(ofmt(o) for o in obs_space.elems())}')
 
     # # START
     # print()
@@ -196,8 +196,8 @@ def main():
 
     # TRANSITIONS
     print()
-    for s in state_space.elems:
-        for a in action_space.elems:
+    for s in state_space.elems():
+        for a in action_space.elems():
             s1 = copy.copy(s)
 
             if a.value == 'up':
@@ -215,7 +215,7 @@ def main():
     translation = {'U': 'up', 'D': 'down', 'L': 'left', 'R': 'right'}
 
     print()
-    for s1 in state_space.elems:
+    for s1 in state_space.elems():
         tile = get_tile(s1)
         direction = translation[tile]
         o = obs_space.elem(value=direction)
@@ -224,7 +224,7 @@ def main():
     # REWARDS
     print()
     print('R: *: *: *: * 0.0')
-    for s in state_space.elems:
+    for s in state_space.elems():
         tile = get_tile(s)
         direction = translation[tile]
 
@@ -233,7 +233,7 @@ def main():
             a = action_space.elem(value=direction)
             print(f'R: {afmt(a)}: {sfmt(s)}: *: * 10.0')
         else:
-            for a in action_space.elems:
+            for a in action_space.elems():
                 if a.value != direction:
                     print(f'R: {afmt(a)}: {sfmt(s)}: *: * -10.0')
 

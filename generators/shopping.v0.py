@@ -3,7 +3,7 @@ import argparse
 import itertools as itt
 from copy import copy
 
-import indextools
+import one_to_one
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Shopping')
@@ -16,11 +16,11 @@ if __name__ == '__main__':
     assert config.n > 1
     assert 0 < config.gamma <= 1
 
-    pos_space = indextools.JointNamedSpace(
-        x=indextools.RangeSpace(config.n), y=indextools.RangeSpace(config.n)
+    pos_space = one_to_one.NamedTupleSpace(
+        x=one_to_one.RangeSpace(config.n), y=one_to_one.RangeSpace(config.n)
     )
 
-    state_space = indextools.JointNamedSpace(agent=pos_space, item=pos_space)
+    state_space = one_to_one.NamedTupleSpace(agent=pos_space, item=pos_space)
 
     def pstr(p):
         return f'{p.x}_{p.y}'
@@ -32,7 +32,7 @@ if __name__ == '__main__':
         return pstr(o)
 
     actions = 'query', 'left', 'right', 'up', 'down', 'buy'
-    action_space = indextools.DomainSpace(actions)
+    action_space = one_to_one.DomainSpace(actions)
 
     # TODO different observation space for queries and for positions..?
     # NO!  with this version, the observation makes sense in the context of
@@ -65,14 +65,14 @@ if __name__ == '__main__':
     print(f'discount: {config.gamma}')
     print('values: reward')
     print(f'states: {state_space.nelems}')
-    # print(f'states: {" ".join(sstr(s) for s in state_space.elems)}')
+    # print(f'states: {" ".join(sstr(s) for s in state_space.elems())}')
     print(f'actions: {" ".join(action_space.values)}')
     print(f'observations: {obs_space.nelems}')
-    # print(f'observations: {" ".join(ostr(o) for o in obs_space.elems)}')
+    # print(f'observations: {" ".join(ostr(o) for o in obs_space.elems())}')
 
     start_states = [
         s
-        for s in state_space.elems
+        for s in state_space.elems()
         if s.agent.x.value == 0 and s.agent.y.value == 0
     ]
     pstart_states = 1 / len(start_states)
@@ -85,12 +85,12 @@ if __name__ == '__main__':
 
     # TRANSITIONS
     print()
-    for a in action_space.elems:
+    for a in action_space.elems():
         if a.value == 'query':
             print(f'T: {a.value} identity')
         elif a.value == 'buy':
             print(f'T: {a.value} identity')
-            for s in state_space.elems:
+            for s in state_space.elems():
                 if s.agent == s.item:
                     print(f'T: {a.value}: {s.idx} reset')
 
@@ -104,13 +104,13 @@ if __name__ == '__main__':
 
                     #     pmatrix = [1.0 / pos_space.nelems
                     #                if s1.agent == s.agent else 0.0
-                    #                for s1 in state_space.elems]
+                    #                for s1 in state_space.elems()]
                     #     pmatrix = ' '.join(map(str, pmatrix))
                     #     # print(f'T: {a.value}: {s.idx} {s.idx} 0.0')
                     #     print(f'T: {a.value}: {s.idx} {pmatrix}')
                     #     # print(f'T: {a.value}: {sstr(s)} {pmatrix}')
         else:
-            for s in state_space.elems:
+            for s in state_space.elems():
                 s1 = copy(s)
                 if a.value == 'left' and s1.agent.x.value > 0:
                     s1.agent.x.value -= 1
@@ -131,8 +131,8 @@ if __name__ == '__main__':
 
     # OBSERVATIONS
     print()
-    # for a, s1, o in itt.product(action_space.elems, state_space.elems,
-    #                             obs_space.elems):
+    # for a, s1, o in itt.product(action_space.elems(), state_space.elems(),
+    #                             obs_space.elems()):
     #     if a == 'query':
     #         if s1.item == o:
     #             print(f'O: {a.value}: {s1.idx}: {o.idx} 1.0')
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     #     if a != 'query' and s1.agent == o:
     #         print(f'O: {a.value}: {s1.idx}: {o.idx} 1.0')
     for a, s1, o in itt.product(
-        action_space.elems, state_space.elems, obs_space.elems
+        action_space.elems(), state_space.elems(), obs_space.elems()
     ):
         if a.value == 'query' and s1.item == o:
             print(f'O: {a.value}: {s1.idx}: {o.idx} 1.0')
@@ -154,8 +154,8 @@ if __name__ == '__main__':
 
     # REWARDS
     print()
-    # for a in action_space.elems:
-    #     for s in state_space.elems:
+    # for a in action_space.elems():
+    #     for s in state_space.elems():
     #         if a == 'query':
     #             print(f'R: {a.value}: *: *: * -2.0')
     #             break
@@ -168,12 +168,12 @@ if __name__ == '__main__':
     #             print(f'R: {a.value}: *: *: * -1.0')
     #             break
 
-    for a in action_space.elems:
+    for a in action_space.elems():
         if a.value == 'query':
             print(f'R: {a.value}: *: *: * -2.0')
         elif a.value == 'buy':
             print(f'R: {a.value}: *: *: * -5.0')
-            for s in state_space.elems:
+            for s in state_space.elems():
                 if s.agent == s.item:
                     print(f'R: {a.value}: {s.idx}: *: * 10.0')
                     # print(f'R: {a.value}: {sstr(s)}: *: * 10.0')
