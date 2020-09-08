@@ -2,7 +2,6 @@ import re
 
 from pkg_resources import resource_exists, resource_filename, resource_listdir
 
-from . import belief
 from .envs import *
 from .envs.registration import env_list, register
 from .wrappers import *
