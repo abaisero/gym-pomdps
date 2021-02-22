@@ -71,7 +71,7 @@ class BatchPOMDP(gym.Wrapper):
             assert ((s >= 0) & (s < self.state_space.n)).all()
             assert ((a >= 0) & (a < self.action_space.n)).all()
 
-            s1_random, o_random = np.split(self.np_random.rand(self.batch_size * 2),
+            s1_random, o_random = np.split(self.np_random.rand(s.shape[0] * 2),
                                           2)  # Random numbers are expensive, draw all of them here
             s1 = vectorized_multinomial(self.env.T[s, a], s1_random)
             o = vectorized_multinomial(self.env.O[s, a, s1], o_random)
