@@ -6,6 +6,21 @@ from gym_pomdps.envs import POMDP
 __all__ = ['BatchPOMDP']
 
 
+def vectorized_multinomial(selected_prob_matrix, random_numbers):
+    """Vectorized sample from [B,N] probabilitity matrix
+
+    Lightly edited from https://stackoverflow.com/a/34190035/2504700
+
+    Args:
+        selected_prob_matrix: (Batch, p) size probability matrix (i.e. T[s,a] or O[s,a,s']
+        random_numbers: (Batch,) size random numbers from np.random.rand()
+    Returns:
+        (Batch,) size sampled multinomial
+    """
+    s = selected_prob_matrix.cumsum(axis=1)  # Sum over p dim for accumulated probability
+    return (s < np.expand_dims(random_numbers, axis=-1)).sum(axis=1)  # Returns first index where random number < accumulated probability
+
+
 class BatchPOMDP(gym.Wrapper):
     """Simulates multiple POMDP trajectories at the same time."""
 
@@ -56,18 +71,23 @@ class BatchPOMDP(gym.Wrapper):
             assert ((s >= 0) & (s < self.state_space.n)).all()
             assert ((a >= 0) & (a < self.action_space.n)).all()
 
-            s1 = np.array(
-                [
-                    self.np_random.multinomial(1, p).argmax()
-                    for p in self.env.T[s, a]
-                ]
-            )
-            o = np.array(
-                [
-                    self.np_random.multinomial(1, p).argmax()
-                    for p in self.env.O[s, a, s1]
-                ]
-            )
+            s1_random, o_random = np.split(self.np_random.rand(self.batch_size * 2),
+                                          2)  # Random numbers are expensive, draw all of them here
+            s1 = vectorized_multinomial(self.env.T[s, a], s1_random)
+            o = vectorized_multinomial(self.env.O[s, a, s1], o_random)
+
+            # s1 = np.array(
+            #     [
+            #         self.np_random.multinomial(1, p).argmax()
+            #         for p in self.env.T[s, a]
+            #     ]
+            # )
+            # o = np.array(
+            #     [
+            #         self.np_random.multinomial(1, p).argmax()
+            #         for p in self.env.O[s, a, s1]
+            #     ]
+            # )
             # NOTE below is the same but unified in single sampling op; requires TO
             # s1, o = np.array([
             #     divmod(
