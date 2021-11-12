@@ -1,10 +1,8 @@
 from setuptools import setup
 
-from gym_pomdps import __version__
-
 setup(
     name='gym-pomdps',
-    version=__version__,
+    version='1.0.0',
     description='Gym flat POMDP environments',
     author='Andrea Baisero',
     author_email='andrea.baisero@gmail.com',
