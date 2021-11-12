@@ -1,5 +1,9 @@
 from setuptools import setup
 
+with open('requirements.txt') as requirements_file:
+    requirements = requirements_file.read()
+
+
 setup(
     name='gym-pomdps',
     version='1.0.0',
@@ -9,6 +13,6 @@ setup(
     url='https://github.com/abaisero/gym-pomdps',
     packages=['gym_pomdps'],
     package_data={'': ['*.pomdp']},
-    install_requires=['gym', 'numpy', 'one-to-one', 'rl-parsers',],
+    install_requires=requirements,
     license='MIT',
 )
