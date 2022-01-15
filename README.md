@@ -49,3 +49,18 @@ NOTE:  This wrapper currently only supports continuing POMDPs.
 
 The BeliefMDP wrapper simulates the belief-MDP associated with the given POMDP,
 keeping track of the current belief-state and computing expected rewards.
+
+## Citation
+
+If you use `gym-pomdps`, please cite it:
+
+```bibtex
+@misc{baisero2019gym-pomdps,
+    author = {Andrea Baisero and Sammie Katt},
+    title = {gym-pomdps: Gym environments from {POMDP} files},
+    year = {2019},
+    publisher = {GitHub},
+    journal = {GitHub repository},
+    howpublished = {\url{https://github.com/abaisero/gym-pomdps}},
+}
+```
