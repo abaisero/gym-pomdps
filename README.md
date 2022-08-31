@@ -56,7 +56,7 @@ If you use `gym-pomdps`, please cite it:
 
 ```bibtex
 @misc{baisero2019gym-pomdps,
-    author = {Andrea Baisero and Sammie Katt},
+    author = {Andrea Baisero},
     title = {gym-pomdps: Gym environments from {POMDP} files},
     year = {2019},
     publisher = {GitHub},
