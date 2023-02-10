@@ -1,4 +1,7 @@
+from typing import Callable, Optional
+
 import gym
+import matplotlib.pyplot as plt
 import numpy as np
 from gym import spaces
 from gym.utils import seeding
@@ -11,9 +14,17 @@ __all__ = ['POMDP']
 class POMDP(gym.Env):  # pylint: disable=abstract-method
     """Environment specified by POMDP file."""
 
-    def __init__(self, text, *, episodic, seed=None):
+    def __init__(
+        self,
+        text,
+        *,
+        episodic: bool,
+        render: Optional[Callable] = None,
+        seed=None,
+    ):
         model = parse(text)
         self.episodic = episodic
+        self._render = render
         self.seed(seed)
 
         if model.values == 'cost':
@@ -100,3 +111,15 @@ class POMDP(gym.Env):  # pylint: disable=abstract-method
         info = dict(reward_cat=reward_cat)
 
         return state_next, obs, reward, done, info
+
+    def render(self, mode="human"):
+        if self._render is None:
+            return super().render(mode)
+
+        image = self._render(self.state)
+
+        if mode == "human":
+            plt.imshow(image)
+            plt.show(block=False)
+
+        return image

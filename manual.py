@@ -4,13 +4,15 @@ import argparse
 import shutil
 
 import gym
+
 import gym_pomdps
 
 
-def manual_control(env, *, symbolic):
+def manual_control(env, *, render: bool, symbolic: bool):
     """Manual control of environment.
 
     :param env:  Gym-POMDP environment
+    :param render:  render environment at reset and step
     :param symbolic:  Use non-semantic actions and observations
     """
 
@@ -23,6 +25,9 @@ def manual_control(env, *, symbolic):
 
     while True:
         env.reset()
+        if render:
+            env.render()
+
         b = gym_pomdps.belief.belief_init(env)
         print('#' * shutil.get_terminal_size().columns)
         print('## START')
@@ -38,6 +43,9 @@ def manual_control(env, *, symbolic):
                     break
 
             o, r, done, info = env.step(a)
+            if render:
+                env.render()
+
             b = gym_pomdps.belief.belief_step(env, b, a, o)
 
             o = observations[o]
@@ -55,11 +63,12 @@ def manual_control(env, *, symbolic):
 def main():
     parser = argparse.ArgumentParser('Manual Control')
     parser.add_argument('pomdp', choices=gym_pomdps.env_list)
+    parser.add_argument('--render', action='store_true')
     parser.add_argument('--symbolic', action='store_true')
     pargs = parser.parse_args()
 
     env = gym.make(pargs.pomdp)
-    manual_control(env, symbolic=pargs.symbolic)
+    manual_control(env, render=pargs.render, symbolic=pargs.symbolic)
 
 
 if __name__ == '__main__':

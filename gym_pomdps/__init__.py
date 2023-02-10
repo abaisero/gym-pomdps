@@ -4,6 +4,7 @@ from pkg_resources import resource_exists, resource_filename, resource_listdir
 
 from .envs import *
 from .envs.registration import env_list, register
+from .rendering import *
 from .wrappers import *
 
 __version__ = '1.0.0'
@@ -38,14 +39,16 @@ for filename in (
     with open(path) as f:
         text = f.read()
 
+    render = rendering.get_render(name)
+
     register(
-        id=f'POMDP-{name}-continuing-v{version}',
-        entry_point='gym_pomdps.envs:POMDP',
-        kwargs=dict(text=text, episodic=False),
+        id=f"POMDP-{name}-continuing-v{version}",
+        entry_point="gym_pomdps.envs:POMDP",
+        kwargs=dict(text=text, episodic=False, render=render),
     )
 
     register(
-        id=f'POMDP-{name}-episodic-v{version}',
-        entry_point='gym_pomdps.envs:POMDP',
-        kwargs=dict(text=text, episodic=True),
+        id=f"POMDP-{name}-episodic-v{version}",
+        entry_point="gym_pomdps.envs:POMDP",
+        kwargs=dict(text=text, episodic=True, render=render),
     )
