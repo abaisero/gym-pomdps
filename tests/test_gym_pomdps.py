@@ -24,9 +24,11 @@ class Gym_POMDP_Test(unittest.TestCase):
 
     def _test_functional(self, env):
         for _ in range(20):
-            s = env.reset_functional()
+            s, o = env.reset_functional()
             self.assertIsInstance(s, int)
+            self.assertIsInstance(o, int)
             self.assertTrue(0 <= s < env.state_space.n)
+            self.assertTrue(o == -1)
 
             for s, a in itt.product(
                 range(env.state_space.n), range(env.action_space.n)

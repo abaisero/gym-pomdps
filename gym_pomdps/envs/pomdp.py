@@ -1,14 +1,22 @@
-from typing import Callable, Optional
+from typing import Callable, Final, Optional, Tuple
 
 import gym
 import matplotlib.pyplot as plt
 import numpy as np
 from gym import spaces
 from gym.utils import seeding
-
 from rl_parsers.pomdp import parse
+from typing_extensions import TypeAlias
 
-__all__ = ['POMDP']
+__all__ = ["POMDP"]
+
+State: TypeAlias = int
+Action: TypeAlias = int
+Observation: TypeAlias = int
+
+NoState: Final = -1
+NoAction: Final = -1
+NoObservation: Final = -1
 
 
 class POMDP(gym.Env):  # pylint: disable=abstract-method
@@ -27,8 +35,8 @@ class POMDP(gym.Env):  # pylint: disable=abstract-method
         self._render = render
         self.seed(seed)
 
-        if model.values == 'cost':
-            raise ValueError('Unsupported `cost` values.')
+        if model.values == "cost":
+            raise ValueError("Unsupported `cost` values.")
 
         self.model = model
         self.discount = model.discount
@@ -44,12 +52,10 @@ class POMDP(gym.Env):  # pylint: disable=abstract-method
         else:
             self.start = model.start
         self.T = model.T.transpose(1, 0, 2).copy()
-        if model.flags['O_includes_state']:
+        if model.flags["O_includes_state"]:
             self.O = model.O.transpose(1, 0, 2, 3).copy()
         else:
-            self.O = np.expand_dims(model.O, axis=0).repeat(
-                self.state_space.n, axis=0
-            )
+            self.O = np.expand_dims(model.O, axis=0).repeat(self.state_space.n, axis=0)
         self.R = model.R.transpose(1, 0, 2, 3).copy()
 
         if episodic:
@@ -60,63 +66,70 @@ class POMDP(gym.Env):  # pylint: disable=abstract-method
         # self.EO = self.TO.sum(-2)
         # self.ER = (self.TO * self.R).sum((-2, -1))
 
-        self.state = -1
+        self.state: State = NoState
+        self.observation: Observation = NoObservation
 
     def seed(self, seed):  # pylint: disable=signature-differs
         self.np_random, seed_ = seeding.np_random(seed)
         return [seed_]
 
-    def reset(self):
-        self.state = self.reset_functional()
+    def reset(self) -> Observation:
+        self.state, self.observation = self.reset_functional()
+        return self.observation
 
-    def step(self, action):
-        self.state, *ret = self.step_functional(self.state, action)
-        return ret
+    def step(self, action: Action) -> Tuple[Observation, float, bool, Optional[dict]]:
+        ret = self.step_functional(self.state, action)
+        self.state, self.observation, reward, done, info = ret
+        return self.observation, reward, done, info
 
-    def reset_functional(self):
-        return self.np_random.multinomial(1, self.start).argmax().item()
+    def reset_functional(self) -> Tuple[State, Observation]:
+        state = self.np_random.multinomial(1, self.start).argmax().item()
+        observation = NoObservation
+        return (state, observation)
 
-    def step_functional(self, state, action):
-        if (state == -1) != (action == -1):
-            raise ValueError(f'Invalid state-action pair ({state}, {action}).')
+    def step_functional(
+        self, state: State, action: Action
+    ) -> Tuple[State, Observation, float, bool, Optional[dict]]:
+        if (state == NoState) != (action == NoAction):
+            raise ValueError(f"Invalid state-action pair ({state}, {action}).")
 
-        if state == -1 and action == -1:
-            return -1, -1, 0.0, True, None
+        if state == NoState and action == NoAction:
+            return NoState, NoObservation, 0.0, True, None
 
         assert 0 <= state < self.state_space.n
         assert 0 <= action < self.action_space.n
 
-        state_next = (
+        next_state = (
             self.np_random.multinomial(1, self.T[state, action]).argmax().item()
         )
-        obs = (
-            self.np_random.multinomial(1, self.O[state, action, state_next])
+        observation = (
+            self.np_random.multinomial(1, self.O[state, action, next_state])
             .argmax()
             .item()
         )
         # NOTE below is the same but unified in single sampling op; requires TO
-        # state_next, obs = divmod(
+        # next_state, observation = divmod(
         #     self.np_random.multinomial(
         #         1, self.TO[state, action].ravel()).argmax().item(),
-        #     self.observation_space.n,
+        #     self.observation.n,
         # )
 
-        reward = self.R[state, action, state_next, obs].item()
+        reward = self.R[state, action, next_state, observation].item()
 
         done = self.D[state, action].item() if self.episodic else False
         if done:
-            state_next = -1
+            next_state = NoState
 
         reward_cat = self.rewards_dict[reward]
         info = dict(reward_cat=reward_cat)
 
-        return state_next, obs, reward, done, info
+        return next_state, observation, reward, done, info
 
     def render(self, mode="human"):
         if self._render is None:
             return super().render(mode)
 
-        image = self._render(self.state)
+        image = self._render(self.observation)
 
         if mode == "human":
             plt.imshow(image)

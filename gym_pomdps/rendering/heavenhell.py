@@ -1,8 +1,5 @@
-from typing import Literal, Union
-
-import numpy as np
-
-from gym_pomdps.rendering.canvas import Canvas
+from gym_pomdps.envs.pomdp import NoObservation, Observation
+from gym_pomdps.rendering.canvas import Canvas, Image
 from gym_pomdps.rendering.colors import SimplePalette
 
 palette = SimplePalette(
@@ -14,114 +11,108 @@ palette = SimplePalette(
 )
 
 
-RenderMode = Union[Literal["human"], Literal["rgb_array"]]
-
-
-def render_heavenhell1(state: int) -> np.ndarray:
+def render_heavenhell1(observation: Observation) -> Image:
     canvas = Canvas((3, 3), background=palette.wall)
     canvas[0, :] = palette.floor
     canvas[:, 1] = palette.floor
     canvas[-1, 1:] = palette.floor
 
-    if state in [0, 6]:
+    if observation == NoObservation or observation == 0:
         canvas[1, 1] = palette.agent
-    elif state in [1, 7]:
+    elif observation == 1:
         canvas[0, 1] = palette.agent
-    elif state in [2, 8]:
+    elif observation == 2:
         canvas[0, 0] = palette.agent
-    elif state in [3, 9]:
+    elif observation == 3:
         canvas[0, 2] = palette.agent
-    elif state in [4, 10]:
+    elif observation == 4:
         canvas[2, 1] = palette.agent
-    elif state in [5, 11]:
+    elif observation == 5:
         canvas[2, 2] = palette.agent
-
-    if state == 5:
         canvas[0, 0] = palette.heaven
         canvas[0, -1] = palette.hell
-    elif state == 11:
+    elif observation == 6:
+        canvas[2, 2] = palette.agent
         canvas[0, 0] = palette.hell
         canvas[0, -1] = palette.heaven
 
     return canvas.image()
 
 
-def render_heavenhell2(state: int) -> np.ndarray:
+def render_heavenhell2(observation: Observation) -> Image:
     canvas = Canvas((4, 5), background=palette.wall)
     canvas[0, :] = palette.floor
     canvas[:, 2] = palette.floor
     canvas[-1, 2:] = palette.floor
 
-    if state in [0, 10]:
+    if observation == NoObservation or observation == 0:
         canvas[2, 2] = palette.agent
-    elif state in [1, 11]:
+    elif observation == 1:
         canvas[1, 2] = palette.agent
-    elif state in [2, 12]:
+    elif observation == 2:
         canvas[0, 2] = palette.agent
-    elif state in [3, 13]:
+    elif observation == 3:
         canvas[0, 1] = palette.agent
-    elif state in [4, 14]:
+    elif observation == 4:
         canvas[0, 0] = palette.agent
-    elif state in [5, 15]:
+    elif observation == 5:
         canvas[0, 3] = palette.agent
-    elif state in [6, 16]:
+    elif observation == 6:
         canvas[0, 4] = palette.agent
-    elif state in [7, 17]:
+    elif observation == 7:
         canvas[3, 2] = palette.agent
-    elif state in [8, 18]:
+    elif observation == 8:
         canvas[3, 3] = palette.agent
-    elif state in [9, 19]:
+    elif observation == 9:
         canvas[3, 4] = palette.agent
-
-    if state == 9:
         canvas[0, 0] = palette.heaven
         canvas[0, -1] = palette.hell
-    elif state == 19:
+    elif observation == 10:
+        canvas[3, 4] = palette.agent
         canvas[0, 0] = palette.hell
         canvas[0, -1] = palette.heaven
 
     return canvas.image()
 
 
-def render_heavenhell3(state: int) -> np.ndarray:
+def render_heavenhell3(observation: Observation) -> Image:
     canvas = Canvas((5, 7), background=palette.wall)
     canvas[0, :] = palette.floor
     canvas[:, 3] = palette.floor
     canvas[-1, 3:] = palette.floor
 
-    if state in [0, 14]:
+    if observation == NoObservation or observation == 0:
         canvas[3, 3] = palette.agent
-    elif state in [1, 15]:
+    elif observation == 1:
         canvas[2, 3] = palette.agent
-    elif state in [2, 16]:
+    elif observation == 2:
         canvas[1, 3] = palette.agent
-    elif state in [3, 17]:
+    elif observation == 3:
         canvas[0, 3] = palette.agent
-    elif state in [4, 18]:
+    elif observation == 4:
         canvas[0, 2] = palette.agent
-    elif state in [5, 19]:
+    elif observation == 5:
         canvas[0, 1] = palette.agent
-    elif state in [6, 20]:
+    elif observation == 6:
         canvas[0, 0] = palette.agent
-    elif state in [7, 21]:
+    elif observation == 7:
         canvas[0, 4] = palette.agent
-    elif state in [8, 22]:
+    elif observation == 8:
         canvas[0, 5] = palette.agent
-    elif state in [9, 23]:
+    elif observation == 9:
         canvas[0, 6] = palette.agent
-    elif state in [10, 24]:
+    elif observation == 10:
         canvas[4, 3] = palette.agent
-    elif state in [11, 25]:
+    elif observation == 11:
         canvas[4, 4] = palette.agent
-    elif state in [12, 26]:
+    elif observation == 12:
         canvas[4, 5] = palette.agent
-    elif state in [13, 27]:
+    elif observation == 13:
         canvas[4, 6] = palette.agent
-
-    if state == 13:
         canvas[0, 0] = palette.heaven
         canvas[0, -1] = palette.hell
-    elif state == 27:
+    elif observation == 14:
+        canvas[4, 6] = palette.agent
         canvas[0, 0] = palette.hell
         canvas[0, -1] = palette.heaven
 

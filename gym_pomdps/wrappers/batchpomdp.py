@@ -28,9 +28,7 @@ class BatchPOMDP(gym.Wrapper):
 
     def reset_functional(self):
         if self.env.start is None:
-            state = self.np_random.randint(
-                self.state_space.n, size=self.batch_size
-            )
+            state = self.np_random.randint(self.state_space.n, size=self.batch_size)
         else:
             state = self.np_random.multinomial(
                 1, self.env.start, size=self.batch_size
@@ -57,10 +55,7 @@ class BatchPOMDP(gym.Wrapper):
             assert ((a >= 0) & (a < self.action_space.n)).all()
 
             s1 = np.array(
-                [
-                    self.np_random.multinomial(1, p).argmax()
-                    for p in self.env.T[s, a]
-                ]
+                [self.np_random.multinomial(1, p).argmax() for p in self.env.T[s, a]]
             )
             o = np.array(
                 [

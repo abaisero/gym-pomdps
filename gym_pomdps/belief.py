@@ -25,9 +25,7 @@ def belief_init(env: gym.Env, shape=None) -> np.array:
     return np.tile(env.start, shape + (1,))
 
 
-def belief_step(
-    env: gym.Env, b: np.array, a: np.array, o: np.array
-) -> np.array:
+def belief_step(env: gym.Env, b: np.array, a: np.array, o: np.array) -> np.array:
     """Return batch of updated belief-states.
 
     :param env:  gym.Env environment
@@ -116,9 +114,7 @@ def expected_obs(env: gym.Env, b: np.ndarray, a: np.ndarray) -> np.ndarray:
     return eobs.reshape(*ashape, -1)
 
 
-def _plausible(
-    env: gym.Env, b: np.ndarray, a: np.ndarray, o: np.ndarray
-) -> np.ndarray:
+def _plausible(env: gym.Env, b: np.ndarray, a: np.ndarray, o: np.ndarray) -> np.ndarray:
     """Return plausibility of observations following belief-action pair.
 
     :param env:  gym.Env environment
