@@ -2,10 +2,10 @@ import re
 
 from pkg_resources import resource_exists, resource_filename, resource_listdir
 
-from .envs import *
-from .envs.registration import env_list, register
-from .rendering import *
-from .wrappers import *
+from gym_pomdps.envs.pomdp import POMDP
+from gym_pomdps.envs.registration import env_list, register
+from gym_pomdps.rendering import get_render_function
+from gym_pomdps.rendering.renderer import PltRenderer
 
 __version__ = "1.0.0"
 
@@ -39,16 +39,18 @@ for filename in (
     with open(path) as f:
         text = f.read()
 
-    render = rendering.get_render(name)
+    render_function = get_render_function(name)
 
+    renderer = None if render_function is None else PltRenderer(render_function)
     register(
         id=f"POMDP-{name}-continuing-v{version}",
-        entry_point="gym_pomdps.envs:POMDP",
-        kwargs=dict(text=text, episodic=False, render=render),
+        entry_point="gym_pomdps.envs.pomdp:POMDP",
+        kwargs=dict(text=text, episodic=False, renderer=renderer),
     )
 
+    renderer = None if render_function is None else PltRenderer(render_function)
     register(
         id=f"POMDP-{name}-episodic-v{version}",
-        entry_point="gym_pomdps.envs:POMDP",
-        kwargs=dict(text=text, episodic=True, render=render),
+        entry_point="gym_pomdps.envs.pomdp:POMDP",
+        kwargs=dict(text=text, episodic=True, renderer=renderer),
     )

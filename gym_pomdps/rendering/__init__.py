@@ -1,12 +1,9 @@
-from typing import Callable, Dict, Optional
+from typing import Dict, Optional
 
-import numpy as np
-
-from .heavenhell import render_heavenhell1, render_heavenhell2, render_heavenhell3
-
-Image = np.ndarray
-RenderFunction = Callable[[int], Image]
-
+from gym_pomdps.rendering.heavenhell import (render_heavenhell1,
+                                             render_heavenhell2,
+                                             render_heavenhell3)
+from gym_pomdps.rendering.renderer import RenderFunction
 
 _render_functions: Dict[str, RenderFunction] = {
     'heavenhell_1': render_heavenhell1,
@@ -15,5 +12,5 @@ _render_functions: Dict[str, RenderFunction] = {
 }
 
 
-def get_render(name: str) -> Optional[RenderFunction]:
+def get_render_function(name: str) -> Optional[RenderFunction]:
     return _render_functions.get(name)

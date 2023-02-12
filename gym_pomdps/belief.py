@@ -3,7 +3,7 @@ from functools import lru_cache
 import gym
 import numpy as np
 
-from gym_pomdps import POMDP
+from gym_pomdps.envs.pomdp import POMDP
 
 __all__ = ['belief_init', 'belief_step', 'expected_reward', 'expected_obs']
 

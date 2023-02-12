@@ -1,9 +1,7 @@
 import gym
 import numpy as np
 
-from gym_pomdps.envs import POMDP
-
-__all__ = ['BatchPOMDP']
+from gym_pomdps.envs.pomdp import POMDP
 
 
 class BatchPOMDP(gym.Wrapper):

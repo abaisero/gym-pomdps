@@ -1,22 +1,16 @@
-from typing import Callable, Final, Optional, Tuple
+from typing import Optional, Tuple
 
 import gym
-import matplotlib.pyplot as plt
 import numpy as np
 from gym import spaces
 from gym.utils import seeding
 from rl_parsers.pomdp import parse
-from typing_extensions import TypeAlias
+
+from gym_pomdps.rendering.renderer import Renderer
+from gym_pomdps.types import (Action, NoAction, NoObservation, NoState,
+                              Observation, State)
 
 __all__ = ["POMDP"]
-
-State: TypeAlias = int
-Action: TypeAlias = int
-Observation: TypeAlias = int
-
-NoState: Final = -1
-NoAction: Final = -1
-NoObservation: Final = -1
 
 
 class POMDP(gym.Env):  # pylint: disable=abstract-method
@@ -27,12 +21,12 @@ class POMDP(gym.Env):  # pylint: disable=abstract-method
         text,
         *,
         episodic: bool,
-        render: Optional[Callable] = None,
+        renderer: Optional[Renderer] = None,
         seed=None,
     ):
         model = parse(text)
         self.episodic = episodic
-        self._render = render
+        self.renderer = renderer
         self.seed(seed)
 
         if model.values == "cost":
@@ -126,13 +120,12 @@ class POMDP(gym.Env):  # pylint: disable=abstract-method
         return next_state, observation, reward, done, info
 
     def render(self, mode="human"):
-        if self._render is None:
+        if self.renderer is None:
             return super().render(mode)
 
-        image = self._render(self.observation)
+        if mode == 'human':
+            return self.renderer.show(self.observation)
+        elif mode == 'rgb_image':
+            return self.renderer.render(self.observation)
 
-        if mode == "human":
-            plt.imshow(image)
-            plt.show(block=False)
-
-        return image
+        raise ValueError(f'invalid mode {mode}')

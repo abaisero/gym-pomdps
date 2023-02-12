@@ -6,6 +6,7 @@ import shutil
 import gym
 
 import gym_pomdps
+import gym_pomdps.belief
 
 
 def manual_control(env, *, render: bool, symbolic: bool):
