@@ -11,9 +11,11 @@ setup(
     package_data={'': ['*.pomdp']},
     install_requires=[
         'gym',
+        'matplotlib',
         'numpy',
         'one_to_one',
         'rl_parsers',
+        'typing_extensions',
     ],
     license='MIT',
 )
