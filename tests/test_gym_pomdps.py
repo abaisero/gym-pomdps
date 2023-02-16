@@ -28,7 +28,7 @@ class Gym_POMDP_Test(unittest.TestCase):
             self.assertIsInstance(s, int)
             self.assertIsInstance(o, int)
             self.assertTrue(0 <= s < env.state_space.n)
-            self.assertTrue(o == -1)
+            self.assertTrue(o == env.observation_space.n - 1)
 
             for s, a in itt.product(
                 range(env.state_space.n), range(env.action_space.n)

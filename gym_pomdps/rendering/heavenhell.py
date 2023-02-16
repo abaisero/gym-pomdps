@@ -1,6 +1,6 @@
 from gym_pomdps.rendering.canvas import Canvas, Image
 from gym_pomdps.rendering.colors import SimplePalette
-from gym_pomdps.types import NoObservation, Observation
+from gym_pomdps.types import Observation
 
 palette = SimplePalette(
     wall="black",
@@ -17,7 +17,7 @@ def render_heavenhell1(observation: Observation) -> Image:
     canvas[:, 1] = palette.floor
     canvas[-1, 1:] = palette.floor
 
-    if observation == NoObservation or observation == 0:
+    if observation == 0 or observation == 7:
         canvas[1, 1] = palette.agent
     elif observation == 1:
         canvas[0, 1] = palette.agent
@@ -45,7 +45,7 @@ def render_heavenhell2(observation: Observation) -> Image:
     canvas[:, 2] = palette.floor
     canvas[-1, 2:] = palette.floor
 
-    if observation == NoObservation or observation == 0:
+    if observation == 0 or observation == 11:
         canvas[2, 2] = palette.agent
     elif observation == 1:
         canvas[1, 2] = palette.agent
@@ -81,7 +81,7 @@ def render_heavenhell3(observation: Observation) -> Image:
     canvas[:, 3] = palette.floor
     canvas[-1, 3:] = palette.floor
 
-    if observation == NoObservation or observation == 0:
+    if observation == 0 or observation == 15:
         canvas[3, 3] = palette.agent
     elif observation == 1:
         canvas[2, 3] = palette.agent

@@ -36,7 +36,8 @@ class POMDP(gym.Env):  # pylint: disable=abstract-method
         self.discount = model.discount
         self.state_space = spaces.Discrete(len(model.states))
         self.action_space = spaces.Discrete(len(model.actions))
-        self.observation_space = spaces.Discrete(len(model.observations))
+        # plus unique new initial observation
+        self.observation_space = spaces.Discrete(len(model.observations) + 1)
         self.reward_range = model.R.min(), model.R.max()
 
         self.rewards_dict = {r: i for i, r in enumerate(np.unique(model.R))}
@@ -63,6 +64,10 @@ class POMDP(gym.Env):  # pylint: disable=abstract-method
         self.state: State = NoState
         self.observation: Observation = NoObservation
 
+    @property
+    def _observation0(self) -> Observation:
+        return self.observation_space.n - 1
+
     def seed(self, seed):  # pylint: disable=signature-differs
         self.np_random, seed_ = seeding.np_random(seed)
         return [seed_]
@@ -78,7 +83,7 @@ class POMDP(gym.Env):  # pylint: disable=abstract-method
 
     def reset_functional(self) -> Tuple[State, Observation]:
         state = self.np_random.multinomial(1, self.start).argmax().item()
-        observation = NoObservation
+        observation = self._observation0
         return (state, observation)
 
     def step_functional(
