@@ -18,7 +18,8 @@ class BatchPOMDP(gym.Wrapper):
         self.state = np.full([batch_size], -1)
 
     def reset(self):  # pylint: disable=arguments-differ
-        self.state = self.reset_functional()
+        self.state, self.observation = self.reset_functional()
+        return self.observation
 
     def step(self, action):
         self.state, *ret = self.step_functional(self.state, action)
@@ -31,7 +32,8 @@ class BatchPOMDP(gym.Wrapper):
             state = self.np_random.multinomial(
                 1, self.env.start, size=self.batch_size
             ).argmax(1)
-        return state
+        observation = np.full((self.batch_size,), self.unwrapped._observation0)
+        return state, observation
 
     def step_functional(self, state, action):
         if ((state == -1) != (action == -1)).any():
