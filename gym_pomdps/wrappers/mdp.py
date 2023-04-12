@@ -1,4 +1,5 @@
 import gym
+
 from gym_pomdps.envs.pomdp import POMDP
 
 
@@ -10,6 +11,7 @@ class MDP(gym.Wrapper):
             raise TypeError(f'Env is not a POMDP (got {type(env)}).')
 
         super().__init__(env)
+        self.observation_space = env.state_space
 
     def reset(self):  # pylint: disable=arguments-differ
         self.env.reset()
